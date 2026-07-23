@@ -287,17 +287,23 @@
       if (p && typeof p.catch === "function") p.catch(fail);
     }
 
-    // Sound chain: local recording -> online Thai TTS -> browser voice -> banner.
+    // Sound chain, tried in order until one makes sound:
+    //   1. real recording      audio/<key>.mp3           (offline)  -> REC
+    //   2. bundled offline TTS  audio/tts/<key>.mp3       (offline)  -> TTS
+    //   3. online Thai TTS      (needs internet)                     -> TTS
+    //   4. browser Thai voice   (if the Speech API exists)           -> TTS
+    //   5. banner               (nothing available)
+    // Steps 1 and 2 are plain audio files, so they play in ANY browser with no
+    // internet and no Speech Synthesis API — the board is never silent.
     function play(f, btn) {
       stopEverything();
       tryAudioSrc(AUDIO_DIR + f.key + ".mp3", btn, /*isRecording*/ true, () => {
-        // No local file: try online Thai TTS (works without the Speech API).
-        tryAudioSrc(onlineTtsUrl(f.th), btn, /*isRecording*/ false, () => {
-          // Online failed (offline/blocked): try the browser's Thai voice.
-          if (!speakWithBrowser(f.th, btn)) {
-            showBanner("Couldn't play sound. Connect to the internet, or add a " +
-              "recording at audio/" + f.key + ".mp3 to play it offline.");
-          }
+        tryAudioSrc(AUDIO_DIR + "tts/" + f.key + ".mp3", btn, /*isRecording*/ false, () => {
+          tryAudioSrc(onlineTtsUrl(f.th), btn, /*isRecording*/ false, () => {
+            if (!speakWithBrowser(f.th, btn)) {
+              showBanner("Couldn't play sound on this device.");
+            }
+          });
         });
       });
     }

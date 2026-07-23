@@ -11,15 +11,20 @@ Open `index.html` in any modern browser (Chrome recommended) and tap a card.
 
 ## Audio: real recordings, with a safety net
 
-The board plays **pre-recorded audio files** from the [`audio/`](audio/) folder
-(`audio/<key>.mp3`). If a file isn't present yet, it still makes sound by
-falling back through this chain, so the app is never silent:
+**The board always makes sound out of the box** — no setup required. On every
+tap it tries this chain and stops at the first that works:
 
-1. **Local recording** — `audio/<key>.mp3` (works offline) → 🟢 REC
-2. **Online Thai TTS** — plays Thai speech from the internet; works even in
-   browsers with no Speech Synthesis API → 🟡 TTS
-3. **Browser Thai voice** — the device's built-in speech, if available → 🟡 TTS
-4. A short banner only if all of the above are unavailable
+1. **Real recording** — `audio/<key>.mp3` (offline) → 🟢 REC
+2. **Bundled offline voice** — `audio/tts/<key>.mp3`, ships with the project
+   (offline; works even with no internet and no Speech API) → 🟡 TTS
+3. **Online Thai TTS** — Thai speech from the internet → 🟡 TTS
+4. **Browser Thai voice** — the device's built-in speech, if any → 🟡 TTS
+5. A short banner only if literally none of the above is available
+
+Step 2 is why it's never silent: those bundled files play in any browser,
+offline. They use the open-source **eSpeak NG** engine, so the voice is robotic
+(clear, but not natural). Add real recordings or Polly files at
+`audio/<key>.mp3` for a natural voice — they take priority (step 1).
 
 Each card shows a small badge:
 
@@ -47,10 +52,12 @@ The filename ↔ phrase map lives in [`manifest.json`](manifest.json).
 ## Files
 
 ```
-index.html               The board (open this)
-manifest.json            key -> {English, Chinese, Thai} for all 18 feelings
-audio/                   audio/<key>.mp3 recordings (+ how-to)
-scripts/generate_audio.py  Generate the Thai MP3s (Polly or gTTS)
+index.html                        The board (open this)
+manifest.json                     key -> {English, Chinese, Thai} for all 18
+audio/<key>.mp3                   your real / Polly recordings (priority)
+audio/tts/<key>.mp3               bundled offline voice (always present)
+scripts/generate_audio.py         make natural Thai MP3s (Polly or gTTS)
+scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
 ```
 
 ## Feelings included (18)
