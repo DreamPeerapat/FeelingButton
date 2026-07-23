@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Feeling Board · 病人感受板</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --ink: #1f2a44;
+      --muted: #6b7897;
+      --accent: #3b7dd8;
+      --accent-soft: #e7f0fd;
+      --shadow: 0 6px 18px rgba(31, 42, 68, 0.10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, "PingFang SC",
+        "Microsoft YaHei", "Noto Sans Thai", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      padding: 24px 16px 48px;
+    }
+
+    header {
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto 8px;
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      margin: 0 0 6px;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .hint {
+      max-width: 620px;
+      margin: 14px auto 26px;
+      background: var(--accent-soft);
+      color: #24507f;
+      border-radius: 14px;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .feeling-btn {
+      background: var(--card);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 14px 18px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.12s ease, border-color 0.12s ease,
+        box-shadow 0.12s ease;
+      font-family: inherit;
+      color: inherit;
+      text-align: center;
+    }
+
+    .feeling-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 24px rgba(59, 125, 216, 0.22);
+    }
+
+    .feeling-btn:active { transform: translateY(0); }
+
+    .feeling-btn.speaking {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      animation: pulse 0.6s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .emoji {
+      font-size: 3.4rem;
+      line-height: 1;
+    }
+
+    .label-en {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .label-zh {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .label-th {
+      font-size: 0.92rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .no-voice {
+      display: none;
+      max-width: 620px;
+      margin: 14px auto 0;
+      background: #fdecec;
+      color: #a12626;
+      border-radius: 14px;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+      .emoji { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🩺 Patient Feeling Board</h1>
+    <p>病人感受沟通板 · English / 中文 · Speaks Thai when tapped</p>
+  </header>
+
+  <div class="hint">
+    👆 Tap a card to hear the feeling spoken in Thai (ภาษาไทย).<br />
+    点击卡片，用泰语朗读该感受。
+  </div>
+
+  <div class="no-voice" id="noVoice">
+    ⚠️ Thai voice not found on this device. The word will still show, but audio may
+    use a fallback voice. Try Chrome or a device with Thai language support.
+  </div>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>
+    Made for patient–caregiver communication · 医患沟通辅助工具
+  </footer>
+
+  <script>
+    // Each feeling: emoji picture, English + Chinese labels, and the Thai word to speak.
+    const feelings = [
+      { emoji: "🍚", en: "Hungry",   zh: "饿了",   th: "หิว" },
+      { emoji: "💧", en: "Thirsty",  zh: "口渴",   th: "หิวน้ำ" },
+      { emoji: "🤕", en: "Pain",     zh: "疼痛",   th: "เจ็บ" },
+      { emoji: "😴", en: "Sleepy",   zh: "困了",   th: "ง่วงนอน" },
+      { emoji: "😫", en: "Tired",    zh: "累了",   th: "เหนื่อย" },
+      { emoji: "🚽", en: "Toilet",   zh: "上厕所", th: "เข้าห้องน้ำ" },
+      { emoji: "🥶", en: "Cold",     zh: "冷",     th: "หนาว" },
+      { emoji: "🥵", en: "Hot",      zh: "热",     th: "ร้อน" },
+      { emoji: "🤢", en: "Nausea",   zh: "恶心",   th: "คลื่นไส้" },
+      { emoji: "😵‍💫", en: "Dizzy",  zh: "头晕",   th: "เวียนหัว" },
+      { emoji: "😮‍💨", en: "Short of Breath", zh: "呼吸困难", th: "หายใจไม่ออก" },
+      { emoji: "🤧", en: "Itchy",    zh: "痒",     th: "คัน" },
+      { emoji: "😟", en: "Scared",   zh: "害怕",   th: "กลัว" },
+      { emoji: "😢", en: "Sad",      zh: "难过",   th: "เศร้า" },
+      { emoji: "🙂", en: "Happy",    zh: "开心",   th: "มีความสุข" },
+      { emoji: "💊", en: "Medicine", zh: "要吃药", th: "อยากกินยา" },
+      { emoji: "🩹", en: "Help",     zh: "需要帮助", th: "ช่วยด้วย" },
+      { emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" }
+    ];
+
+    const grid = document.getElementById("grid");
+    const supportsSpeech = "speechSynthesis" in window;
+    let thaiVoice = null;
+
+    function pickThaiVoice() {
+      if (!supportsSpeech) return;
+      const voices = window.speechSynthesis.getVoices();
+      thaiVoice =
+        voices.find(v => v.lang && v.lang.toLowerCase().startsWith("th")) || null;
+      if (voices.length && !thaiVoice) {
+        document.getElementById("noVoice").style.display = "block";
+      } else {
+        document.getElementById("noVoice").style.display = "none";
+      }
+    }
+
+    if (supportsSpeech) {
+      pickThaiVoice();
+      // Voices often load asynchronously.
+      window.speechSynthesis.onvoiceschanged = pickThaiVoice;
+    }
+
+    function speakThai(text, btn) {
+      if (!supportsSpeech) return;
+      window.speechSynthesis.cancel(); // stop any in-progress speech
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "th-TH";
+      if (thaiVoice) utter.voice = thaiVoice;
+      utter.rate = 0.9;
+      utter.pitch = 1;
+
+      btn.classList.add("speaking");
+      utter.onend = () => btn.classList.remove("speaking");
+      utter.onerror = () => btn.classList.remove("speaking");
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    feelings.forEach(f => {
+      const btn = document.createElement("button");
+      btn.className = "feeling-btn";
+      btn.setAttribute("type", "button");
+      btn.setAttribute("aria-label", f.en + " / " + f.zh + " / " + f.th);
+      btn.innerHTML = `
+        <span class="emoji" aria-hidden="true">${f.emoji}</span>
+        <span class="label-en">${f.en}</span>
+        <span class="label-zh">${f.zh}</span>
+        <span class="label-th">🔊 ${f.th}</span>
+      `;
+      btn.addEventListener("click", () => speakThai(f.th, btn));
+      grid.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
