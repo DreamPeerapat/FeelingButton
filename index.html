@@ -227,11 +227,10 @@
       window.speechSynthesis.onvoiceschanged = pickThaiVoice;
     }
 
-    function speakThaiFallback(text, btn) {
-      if (!supportsSpeech) {
-        showBanner("This browser can't play audio or speak. Please add real recordings to the audio/ folder.");
-        return;
-      }
+    // Speak with the browser's built-in Thai voice. Returns false if the
+    // browser has no speech support at all (so the caller can try something else).
+    function speakWithBrowser(text, btn) {
+      if (!supportsSpeech) return false;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "th-TH";
@@ -241,6 +240,15 @@
       utter.onend = () => setSpeaking(btn, false);
       utter.onerror = () => setSpeaking(btn, false);
       window.speechSynthesis.speak(utter);
+      return true;
+    }
+
+    // Online Thai TTS. Played through an <audio> element, which can load
+    // cross-origin without CORS — so it works even in browsers that have no
+    // Speech Synthesis API and even when no local recording exists.
+    function onlineTtsUrl(text) {
+      return "https://translate.google.com/translate_tts" +
+        "?ie=UTF-8&tl=th&client=tw-ob&q=" + encodeURIComponent(text);
     }
 
     // ---- Playback: prefer the real recording, fall back to browser voice ----
@@ -255,34 +263,43 @@
         .forEach(b => b.classList.remove("speaking"));
     }
 
-    function play(f, btn) {
-      stopEverything();
+    // Try to play an audio URL. Runs onFail() if it can't start.
+    function tryAudioSrc(src, btn, isRecording, onFail) {
       let handled = false;
-
-      const audio = new Audio(AUDIO_DIR + f.key + ".mp3");
-      audio.addEventListener("playing", () => setSpeaking(btn, true));
+      const audio = new Audio(src);
+      audio.addEventListener("playing", () => {
+        setSpeaking(btn, true);
+        setBadge(btn, isRecording);
+      });
       audio.addEventListener("ended", () => {
         setSpeaking(btn, false);
         if (currentAudio === audio) currentAudio = null;
       });
-      audio.addEventListener("error", () => {
+      const fail = () => {
         if (handled) return;
         handled = true;
-        setBadge(btn, false);          // recording missing -> mark as TTS
-        speakThaiFallback(f.th, btn);  // fall back to browser voice
-      });
-
+        if (currentAudio === audio) currentAudio = null;
+        onFail();
+      };
+      audio.addEventListener("error", fail);
       currentAudio = audio;
       const p = audio.play();
-      if (p && typeof p.catch === "function") {
-        p.then(() => setBadge(btn, true)) // recording exists and played
-         .catch(() => {
-           if (handled) return;
-           handled = true;
-           setBadge(btn, false);
-           speakThaiFallback(f.th, btn);
-         });
-      }
+      if (p && typeof p.catch === "function") p.catch(fail);
+    }
+
+    // Sound chain: local recording -> online Thai TTS -> browser voice -> banner.
+    function play(f, btn) {
+      stopEverything();
+      tryAudioSrc(AUDIO_DIR + f.key + ".mp3", btn, /*isRecording*/ true, () => {
+        // No local file: try online Thai TTS (works without the Speech API).
+        tryAudioSrc(onlineTtsUrl(f.th), btn, /*isRecording*/ false, () => {
+          // Online failed (offline/blocked): try the browser's Thai voice.
+          if (!speakWithBrowser(f.th, btn)) {
+            showBanner("Couldn't play sound. Connect to the internet, or add a " +
+              "recording at audio/" + f.key + ".mp3 to play it offline.");
+          }
+        });
+      });
     }
 
     // ---- UI helpers ----
@@ -325,9 +342,8 @@
       grid.appendChild(btn);
     });
 
-    // Note whether any recordings are present isn't known until first tap
-    // (files are loaded on demand). If the page is opened with no audio/
-    // files at all, taps simply use the browser fallback voice.
+    // Recordings are loaded on demand at first tap. With no audio/ files at
+    // all, taps still make sound via online Thai TTS (or the browser voice).
   </script>
 </body>
 </html>

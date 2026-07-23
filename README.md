@@ -12,8 +12,14 @@ Open `index.html` in any modern browser (Chrome recommended) and tap a card.
 ## Audio: real recordings, with a safety net
 
 The board plays **pre-recorded audio files** from the [`audio/`](audio/) folder
-(`audio/<key>.mp3`). For any file that isn't present yet, it automatically
-**falls back to the browser's built-in Thai voice** so the app is never silent.
+(`audio/<key>.mp3`). If a file isn't present yet, it still makes sound by
+falling back through this chain, so the app is never silent:
+
+1. **Local recording** — `audio/<key>.mp3` (works offline) → 🟢 REC
+2. **Online Thai TTS** — plays Thai speech from the internet; works even in
+   browsers with no Speech Synthesis API → 🟡 TTS
+3. **Browser Thai voice** — the device's built-in speech, if available → 🟡 TTS
+4. A short banner only if all of the above are unavailable
 
 Each card shows a small badge:
 
