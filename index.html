@@ -66,6 +66,7 @@
     }
 
     .feeling-btn {
+      position: relative;
       background: var(--card);
       border: 2px solid transparent;
       border-radius: var(--radius);
@@ -125,6 +126,21 @@
       font-weight: 600;
     }
 
+    /* Small badge in the corner showing whether a real recording is in use. */
+    .src-badge {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      opacity: 0.85;
+    }
+    .src-badge.rec { background: #e4f7ea; color: #1f8a4c; }
+    .src-badge.tts { background: #fdf3e3; color: #a8720f; }
+
     footer {
       text-align: center;
       margin-top: 34px;
@@ -132,22 +148,16 @@
       font-size: 0.85rem;
     }
 
-    .no-voice {
-      display: none;
+    .banner {
       max-width: 620px;
       margin: 14px auto 0;
-      background: #fdecec;
-      color: #a12626;
       border-radius: 14px;
       padding: 10px 16px;
       text-align: center;
       font-size: 0.9rem;
     }
-
-    @media (max-width: 480px) {
-      .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-      .emoji { font-size: 3rem; }
-    }
+    .banner.info { background: var(--accent-soft); color: #24507f; }
+    .banner.warn { background: #fdf3e3; color: #8a5a0f; }
   </style>
 </head>
 <body>
@@ -161,92 +171,163 @@
     点击卡片，用泰语朗读该感受。
   </div>
 
-  <div class="no-voice" id="noVoice">
-    ⚠️ Thai voice not found on this device. The word will still show, but audio may
-    use a fallback voice. Try Chrome or a device with Thai language support.
-  </div>
+  <div class="banner warn" id="banner" style="display:none"></div>
 
   <main class="grid" id="grid"></main>
 
   <footer>
-    Made for patient–caregiver communication · 医患沟通辅助工具
+    Made for patient–caregiver communication · 医患沟通辅助工具<br />
+    <span style="font-size:0.78rem;">
+      🟢 REC = real recording · 🟡 TTS = browser fallback voice
+    </span>
   </footer>
 
   <script>
-    // Each feeling: emoji picture, English + Chinese labels, and the Thai word to speak.
+    // Each feeling has a stable "key" used for its audio file: audio/<key>.mp3
+    // Labels: emoji picture + English + Chinese. "th" is the spoken Thai word,
+    // used both for the on-screen text and as the browser fallback voice.
     const feelings = [
-      { emoji: "🍚", en: "Hungry",   zh: "饿了",   th: "หิว" },
-      { emoji: "💧", en: "Thirsty",  zh: "口渴",   th: "หิวน้ำ" },
-      { emoji: "🤕", en: "Pain",     zh: "疼痛",   th: "เจ็บ" },
-      { emoji: "😴", en: "Sleepy",   zh: "困了",   th: "ง่วงนอน" },
-      { emoji: "😫", en: "Tired",    zh: "累了",   th: "เหนื่อย" },
-      { emoji: "🚽", en: "Toilet",   zh: "上厕所", th: "เข้าห้องน้ำ" },
-      { emoji: "🥶", en: "Cold",     zh: "冷",     th: "หนาว" },
-      { emoji: "🥵", en: "Hot",      zh: "热",     th: "ร้อน" },
-      { emoji: "🤢", en: "Nausea",   zh: "恶心",   th: "คลื่นไส้" },
-      { emoji: "😵‍💫", en: "Dizzy",  zh: "头晕",   th: "เวียนหัว" },
-      { emoji: "😮‍💨", en: "Short of Breath", zh: "呼吸困难", th: "หายใจไม่ออก" },
-      { emoji: "🤧", en: "Itchy",    zh: "痒",     th: "คัน" },
-      { emoji: "😟", en: "Scared",   zh: "害怕",   th: "กลัว" },
-      { emoji: "😢", en: "Sad",      zh: "难过",   th: "เศร้า" },
-      { emoji: "🙂", en: "Happy",    zh: "开心",   th: "มีความสุข" },
-      { emoji: "💊", en: "Medicine", zh: "要吃药", th: "อยากกินยา" },
-      { emoji: "🩹", en: "Help",     zh: "需要帮助", th: "ช่วยด้วย" },
-      { emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" }
+      { key: "hungry",   emoji: "🍚", en: "Hungry",   zh: "饿了",   th: "หิว" },
+      { key: "thirsty",  emoji: "💧", en: "Thirsty",  zh: "口渴",   th: "หิวน้ำ" },
+      { key: "pain",     emoji: "🤕", en: "Pain",     zh: "疼痛",   th: "เจ็บ" },
+      { key: "sleepy",   emoji: "😴", en: "Sleepy",   zh: "困了",   th: "ง่วงนอน" },
+      { key: "tired",    emoji: "😫", en: "Tired",    zh: "累了",   th: "เหนื่อย" },
+      { key: "toilet",   emoji: "🚽", en: "Toilet",   zh: "上厕所", th: "เข้าห้องน้ำ" },
+      { key: "cold",     emoji: "🥶", en: "Cold",     zh: "冷",     th: "หนาว" },
+      { key: "hot",      emoji: "🥵", en: "Hot",      zh: "热",     th: "ร้อน" },
+      { key: "nausea",   emoji: "🤢", en: "Nausea",   zh: "恶心",   th: "คลื่นไส้" },
+      { key: "dizzy",    emoji: "😵‍💫", en: "Dizzy",  zh: "头晕",   th: "เวียนหัว" },
+      { key: "breath",   emoji: "😮‍💨", en: "Short of Breath", zh: "呼吸困难", th: "หายใจไม่ออก" },
+      { key: "itchy",    emoji: "🤧", en: "Itchy",    zh: "痒",     th: "คัน" },
+      { key: "scared",   emoji: "😟", en: "Scared",   zh: "害怕",   th: "กลัว" },
+      { key: "sad",      emoji: "😢", en: "Sad",      zh: "难过",   th: "เศร้า" },
+      { key: "happy",    emoji: "🙂", en: "Happy",    zh: "开心",   th: "มีความสุข" },
+      { key: "medicine", emoji: "💊", en: "Medicine", zh: "要吃药", th: "อยากกินยา" },
+      { key: "help",     emoji: "🩹", en: "Help",     zh: "需要帮助", th: "ช่วยด้วย" },
+      { key: "nurse",    emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" }
     ];
 
+    const AUDIO_DIR = "audio/";
     const grid = document.getElementById("grid");
+    const banner = document.getElementById("banner");
     const supportsSpeech = "speechSynthesis" in window;
-    let thaiVoice = null;
 
+    let thaiVoice = null;
+    let currentAudio = null; // the <audio> currently playing, if any
+
+    // ---- Browser fallback voice (used only when a recording is missing) ----
     function pickThaiVoice() {
       if (!supportsSpeech) return;
       const voices = window.speechSynthesis.getVoices();
       thaiVoice =
         voices.find(v => v.lang && v.lang.toLowerCase().startsWith("th")) || null;
-      if (voices.length && !thaiVoice) {
-        document.getElementById("noVoice").style.display = "block";
-      } else {
-        document.getElementById("noVoice").style.display = "none";
-      }
     }
-
     if (supportsSpeech) {
       pickThaiVoice();
-      // Voices often load asynchronously.
       window.speechSynthesis.onvoiceschanged = pickThaiVoice;
     }
 
-    function speakThai(text, btn) {
-      if (!supportsSpeech) return;
-      window.speechSynthesis.cancel(); // stop any in-progress speech
+    function speakThaiFallback(text, btn) {
+      if (!supportsSpeech) {
+        showBanner("This browser can't play audio or speak. Please add real recordings to the audio/ folder.");
+        return;
+      }
+      window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "th-TH";
       if (thaiVoice) utter.voice = thaiVoice;
       utter.rate = 0.9;
-      utter.pitch = 1;
-
-      btn.classList.add("speaking");
-      utter.onend = () => btn.classList.remove("speaking");
-      utter.onerror = () => btn.classList.remove("speaking");
-
+      setSpeaking(btn, true);
+      utter.onend = () => setSpeaking(btn, false);
+      utter.onerror = () => setSpeaking(btn, false);
       window.speechSynthesis.speak(utter);
     }
 
+    // ---- Playback: prefer the real recording, fall back to browser voice ----
+    function stopEverything() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      if (supportsSpeech) window.speechSynthesis.cancel();
+      document.querySelectorAll(".feeling-btn.speaking")
+        .forEach(b => b.classList.remove("speaking"));
+    }
+
+    function play(f, btn) {
+      stopEverything();
+      let handled = false;
+
+      const audio = new Audio(AUDIO_DIR + f.key + ".mp3");
+      audio.addEventListener("playing", () => setSpeaking(btn, true));
+      audio.addEventListener("ended", () => {
+        setSpeaking(btn, false);
+        if (currentAudio === audio) currentAudio = null;
+      });
+      audio.addEventListener("error", () => {
+        if (handled) return;
+        handled = true;
+        setBadge(btn, false);          // recording missing -> mark as TTS
+        speakThaiFallback(f.th, btn);  // fall back to browser voice
+      });
+
+      currentAudio = audio;
+      const p = audio.play();
+      if (p && typeof p.catch === "function") {
+        p.then(() => setBadge(btn, true)) // recording exists and played
+         .catch(() => {
+           if (handled) return;
+           handled = true;
+           setBadge(btn, false);
+           speakThaiFallback(f.th, btn);
+         });
+      }
+    }
+
+    // ---- UI helpers ----
+    function setSpeaking(btn, on) {
+      btn.classList.toggle("speaking", on);
+    }
+
+    function setBadge(btn, hasRecording) {
+      const badge = btn.querySelector(".src-badge");
+      if (!badge) return;
+      if (hasRecording) {
+        badge.textContent = "🟢 REC";
+        badge.className = "src-badge rec";
+      } else {
+        badge.textContent = "🟡 TTS";
+        badge.className = "src-badge tts";
+      }
+      badge.style.display = "inline-block";
+    }
+
+    function showBanner(msg) {
+      banner.textContent = "⚠️ " + msg;
+      banner.style.display = "block";
+    }
+
+    // ---- Build the board ----
     feelings.forEach(f => {
       const btn = document.createElement("button");
       btn.className = "feeling-btn";
       btn.setAttribute("type", "button");
       btn.setAttribute("aria-label", f.en + " / " + f.zh + " / " + f.th);
       btn.innerHTML = `
+        <span class="src-badge" style="display:none"></span>
         <span class="emoji" aria-hidden="true">${f.emoji}</span>
         <span class="label-en">${f.en}</span>
         <span class="label-zh">${f.zh}</span>
         <span class="label-th">🔊 ${f.th}</span>
       `;
-      btn.addEventListener("click", () => speakThai(f.th, btn));
+      btn.addEventListener("click", () => play(f, btn));
       grid.appendChild(btn);
     });
+
+    // Note whether any recordings are present isn't known until first tap
+    // (files are loaded on demand). If the page is opened with no audio/
+    // files at all, taps simply use the browser fallback voice.
   </script>
 </body>
 </html>

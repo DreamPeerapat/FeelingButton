@@ -1,0 +1,24 @@
+{
+  "description": "Filename <-> phrase map for the Patient Feeling Board. Each audio file lives at audio/<key>.mp3 and should say the Thai phrase below.",
+  "language": { "spoken": "th-TH" },
+  "feelings": [
+    { "key": "hungry",   "en": "Hungry",           "zh": "饿了",     "th": "หิว" },
+    { "key": "thirsty",  "en": "Thirsty",          "zh": "口渴",     "th": "หิวน้ำ" },
+    { "key": "pain",     "en": "Pain",             "zh": "疼痛",     "th": "เจ็บ" },
+    { "key": "sleepy",   "en": "Sleepy",           "zh": "困了",     "th": "ง่วงนอน" },
+    { "key": "tired",    "en": "Tired",            "zh": "累了",     "th": "เหนื่อย" },
+    { "key": "toilet",   "en": "Toilet",           "zh": "上厕所",   "th": "เข้าห้องน้ำ" },
+    { "key": "cold",     "en": "Cold",             "zh": "冷",       "th": "หนาว" },
+    { "key": "hot",      "en": "Hot",              "zh": "热",       "th": "ร้อน" },
+    { "key": "nausea",   "en": "Nausea",           "zh": "恶心",     "th": "คลื่นไส้" },
+    { "key": "dizzy",    "en": "Dizzy",            "zh": "头晕",     "th": "เวียนหัว" },
+    { "key": "breath",   "en": "Short of Breath",  "zh": "呼吸困难", "th": "หายใจไม่ออก" },
+    { "key": "itchy",    "en": "Itchy",            "zh": "痒",       "th": "คัน" },
+    { "key": "scared",   "en": "Scared",           "zh": "害怕",     "th": "กลัว" },
+    { "key": "sad",      "en": "Sad",              "zh": "难过",     "th": "เศร้า" },
+    { "key": "happy",    "en": "Happy",            "zh": "开心",     "th": "มีความสุข" },
+    { "key": "medicine", "en": "Medicine",         "zh": "要吃药",   "th": "อยากกินยา" },
+    { "key": "help",     "en": "Help",             "zh": "需要帮助", "th": "ช่วยด้วย" },
+    { "key": "nurse",    "en": "Call Nurse",       "zh": "叫护士",   "th": "เรียกพยาบาล" }
+  ]
+}
