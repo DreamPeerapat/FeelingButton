@@ -23,8 +23,21 @@ tap it tries this chain and stops at the first that works:
 
 Step 2 is why it's never silent: those bundled files play in any browser,
 offline. They use the open-source **eSpeak NG** engine, so the voice is robotic
-(clear, but not natural). Add real recordings or Polly files at
-`audio/<key>.mp3` for a natural voice — they take priority (step 1).
+and not tonally accurate.
+
+**On the deployed GitHub Pages site, step 1 is filled in automatically with a
+clear Google Thai voice.** The Pages workflow (`.github/workflows/static.yml`)
+runs `gTTS` at build time — the runner has internet, so it generates clear
+`audio/<key>.mp3` files into the deployed site. That's why the live site sounds
+clear even though the repo only ships the offline eSpeak fallback. For an even
+more natural voice (Amazon Polly neural, or a real human recording), drop your
+own `audio/<key>.mp3` in — it takes priority over everything.
+
+## Pictures
+
+Each card's picture is a **custom SVG illustration** defined in
+[`pictures.js`](pictures.js) — drawn in code, no emoji and no image files, so
+they render identically on every device. Emoji are only a last-resort fallback.
 
 Each card shows a small badge:
 
@@ -53,11 +66,13 @@ The filename ↔ phrase map lives in [`manifest.json`](manifest.json).
 
 ```
 index.html                        The board (open this)
+pictures.js                       custom SVG illustration for each feeling
 manifest.json                     key -> {English, Chinese, Thai} for all 18
-audio/<key>.mp3                   your real / Polly recordings (priority)
+audio/<key>.mp3                   clear voice: CI (gTTS) / Polly / human (priority)
 audio/tts/<key>.mp3               bundled offline voice (always present)
-scripts/generate_audio.py         make natural Thai MP3s (Polly or gTTS)
+scripts/generate_audio.py         make clear Thai MP3s (gTTS or Polly)
 scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
+.github/workflows/static.yml      deploys to Pages + generates clear audio
 ```
 
 ## Feelings included (18)

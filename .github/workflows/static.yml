@@ -31,6 +31,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Generate clear Thai audio (Google TTS)
+        # The runner has internet, so it can synthesize clear Google Thai audio
+        # into audio/<key>.mp3 for the deployed site. If it fails (e.g. rate
+        # limit), the bundled offline voice in audio/tts/ is used instead.
+        run: |
+          python -m pip install --quiet gTTS
+          python scripts/generate_audio.py --engine gtts || echo "audio generation skipped; using bundled offline voice"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
