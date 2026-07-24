@@ -161,6 +161,125 @@
     }
     .banner.info { background: var(--accent-soft); color: #24507f; }
     .banner.warn { background: #fdf3e3; color: #8a5a0f; }
+
+    /* "Add feeling" card */
+    .add-btn {
+      background: transparent;
+      border: 2.5px dashed #b9c6db;
+      color: var(--muted);
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 180px;
+      font-family: inherit;
+      transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+    }
+    .add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .add-btn .plus { font-size: 2.6rem; line-height: 1; }
+    .add-btn .add-label { font-size: 1rem; font-weight: 700; }
+
+    /* Remove (×) button on custom cards */
+    .remove-btn {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: #f3d6d6;
+      color: #b23b3b;
+      font-size: 0.95rem;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .feeling-btn.custom .remove-btn { display: flex; }
+    .remove-btn:hover { background: #eabbbb; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 42, 68, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(31, 42, 68, 0.3);
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px 22px 20px;
+    }
+    .modal h2 { margin: 0 0 4px; font-size: 1.25rem; }
+    .modal .sub { margin: 0 0 16px; color: var(--muted); font-size: 0.88rem; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 5px; }
+    .field input {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid #cdd6e3;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+    .field input:focus { outline: none; border-color: var(--accent); }
+
+    .picker-label { font-weight: 600; font-size: 0.88rem; margin-bottom: 8px; }
+    .picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+      gap: 8px;
+      max-height: 190px;
+      overflow-y: auto;
+      padding: 6px;
+      border: 1.5px solid #e0e6ef;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+    .pick {
+      border: 2px solid transparent;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      padding: 4px;
+      aspect-ratio: 1 / 1;
+    }
+    .pick svg { width: 100%; height: 100%; display: block; }
+    .pick.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .btn {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #2f6bc0; }
+    .btn-ghost { background: #eef1f6; color: var(--ink); }
+    .btn-ghost:hover { background: #e2e7ef; }
+    .form-error { color: #b23b3b; font-size: 0.85rem; min-height: 1.1em; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -184,6 +303,37 @@
       🟢 clear voice · 🟡 basic offline voice
     </span>
   </footer>
+
+  <!-- Add / edit feeling modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">Add a feeling</h2>
+      <p class="sub">添加新的感受 · Fill in the words and pick a picture.</p>
+
+      <div class="field">
+        <label for="fEn">English</label>
+        <input id="fEn" type="text" placeholder="e.g. Water" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="fZh">中文 (Chinese)</label>
+        <input id="fZh" type="text" placeholder="例如：水" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="fTh">ภาษาไทย — spoken word (Thai)</label>
+        <input id="fTh" type="text" placeholder="เช่น น้ำ" autocomplete="off" />
+      </div>
+
+      <div class="picker-label">Choose a picture · 选择图片</div>
+      <div class="picker" id="picker"></div>
+
+      <div class="form-error" id="formError"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancelBtn" type="button">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn" type="button">Add feeling</button>
+      </div>
+    </div>
+  </div>
 
   <script src="pictures.js"></script>
   <script>
@@ -335,25 +485,142 @@
       banner.style.display = "block";
     }
 
-    // ---- Build the board ----
-    feelings.forEach(f => {
+    // ---- Custom feelings (added by the user, saved in the browser) ----
+    const STORE_KEY = "fb_custom_feelings_v1";
+    const PICS = window.FEELING_PICS || {};
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function loadCustom() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+      catch (e) { return []; }
+    }
+    function saveCustom(list) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); }
+      catch (e) { /* storage unavailable — feelings just won't persist */ }
+    }
+
+    function picFor(f) {
+      return PICS[f.picKey] || PICS[f.key] ||
+        ('<span class="emoji">' + (f.emoji || "🩹") + "</span>");
+    }
+
+    // ---- Build one feeling card ----
+    function makeCard(f, isCustom) {
       const btn = document.createElement("button");
-      btn.className = "feeling-btn";
+      btn.className = "feeling-btn" + (isCustom ? " custom" : "");
       btn.setAttribute("type", "button");
       btn.setAttribute("aria-label", f.en + " / " + f.zh + " / " + f.th);
       btn.innerHTML = `
         <span class="src-badge" style="display:none"></span>
-        <span class="pic" aria-hidden="true">${(window.FEELING_PICS && window.FEELING_PICS[f.key]) || '<span class="emoji">' + f.emoji + '</span>'}</span>
-        <span class="label-en">${f.en}</span>
-        <span class="label-zh">${f.zh}</span>
-        <span class="label-th">🔊 ${f.th}</span>
+        ${isCustom ? '<span class="remove-btn" title="Remove">×</span>' : ""}
+        <span class="pic" aria-hidden="true">${picFor(f)}</span>
+        <span class="label-en">${escapeHtml(f.en)}</span>
+        <span class="label-zh">${escapeHtml(f.zh)}</span>
+        <span class="label-th">🔊 ${escapeHtml(f.th)}</span>
       `;
       btn.addEventListener("click", () => play(f, btn));
-      grid.appendChild(btn);
+      if (isCustom) {
+        btn.querySelector(".remove-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (confirm('Remove "' + f.en + '"?')) removeCustom(f.key);
+        });
+      }
+      return btn;
+    }
+
+    // ---- Render the whole board ----
+    function render() {
+      grid.innerHTML = "";
+      feelings.forEach(f => grid.appendChild(makeCard(f, false)));
+      loadCustom().forEach(f => grid.appendChild(makeCard(f, true)));
+
+      const add = document.createElement("button");
+      add.className = "add-btn";
+      add.setAttribute("type", "button");
+      add.innerHTML = `<span class="plus">＋</span>
+        <span class="add-label">Add feeling</span>
+        <span style="font-size:0.8rem;">添加感受</span>`;
+      add.addEventListener("click", openModal);
+      grid.appendChild(add);
+    }
+
+    function removeCustom(key) {
+      saveCustom(loadCustom().filter(f => f.key !== key));
+      render();
+    }
+
+    // ---- Add-feeling modal ----
+    const overlay = document.getElementById("modalOverlay");
+    const picker = document.getElementById("picker");
+    const inEn = document.getElementById("fEn");
+    const inZh = document.getElementById("fZh");
+    const inTh = document.getElementById("fTh");
+    const formError = document.getElementById("formError");
+    let selectedPicKey = null;
+
+    // Build the picture picker once from the illustration set.
+    Object.keys(PICS).forEach(key => {
+      const cell = document.createElement("button");
+      cell.className = "pick";
+      cell.type = "button";
+      cell.title = key;
+      cell.innerHTML = PICS[key];
+      cell.addEventListener("click", () => {
+        selectedPicKey = key;
+        picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
+        cell.classList.add("selected");
+      });
+      picker.appendChild(cell);
     });
 
-    // Recordings are loaded on demand at first tap. With no audio/ files at
-    // all, taps still make sound via online Thai TTS (or the browser voice).
+    function openModal() {
+      inEn.value = ""; inZh.value = ""; inTh.value = "";
+      formError.textContent = "";
+      selectedPicKey = null;
+      picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
+      overlay.classList.add("open");
+      inEn.focus();
+    }
+    function closeModal() { overlay.classList.remove("open"); }
+
+    function saveFeeling() {
+      const en = inEn.value.trim();
+      const zh = inZh.value.trim();
+      const th = inTh.value.trim();
+      if (!en) { formError.textContent = "Please enter the English word."; inEn.focus(); return; }
+      if (!th) { formError.textContent = "Please enter the Thai word to speak."; inTh.focus(); return; }
+      if (!selectedPicKey) { formError.textContent = "Please choose a picture."; return; }
+
+      const list = loadCustom();
+      list.push({
+        key: "custom_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        picKey: selectedPicKey,
+        en: en, zh: zh, th: th, custom: true
+      });
+      saveCustom(list);
+      closeModal();
+      render();
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", saveFeeling);
+    document.getElementById("cancelBtn").addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
+    });
+    // Enter in a text field submits the form.
+    [inEn, inZh, inTh].forEach(el =>
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter") saveFeeling(); }));
+
+    render();
+
+    // Built-in cards use bundled/generated audio; custom feelings speak their
+    // Thai text via online TTS (or the browser voice). Recordings load on tap.
   </script>
 </body>
 </html>
