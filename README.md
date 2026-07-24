@@ -9,6 +9,18 @@ the *Hungry* card says **"หิว"**.
 
 Open `index.html` in any modern browser (Chrome recommended) and tap a card.
 
+## Choose the spoken language
+
+Use the **🗣️ Speak in** selector at the top to pick which language a tap speaks:
+**ไทย Thai** (default), **中文**, or **English**. Your choice is highlighted on
+each card (with a 🔊) and saved in the browser for next time. It applies to
+built-in and custom feelings alike.
+
+On the deployed site, all three languages play a clear voice (the Pages build
+generates `audio/<key>.mp3` for Thai and `audio/zh/`, `audio/en/` for the
+others). Offline, Thai uses its bundled voice; Chinese/English use the device's
+built-in voice if present.
+
 ## Audio: real recordings, with a safety net
 
 **The board always makes sound out of the box** — no setup required. On every

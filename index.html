@@ -162,6 +162,44 @@
     .banner.info { background: var(--accent-soft); color: #24507f; }
     .banner.warn { background: #fdf3e3; color: #8a5a0f; }
 
+    /* Language selector (which language is spoken on tap) */
+    .lang-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 22px;
+    }
+    .lang-bar .lbl { color: var(--muted); font-size: 0.9rem; font-weight: 600; margin-right: 2px; }
+    .lang-seg {
+      display: inline-flex;
+      background: #eaeff6;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 2px;
+    }
+    .lang-opt {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .lang-opt:hover { color: var(--ink); }
+    .lang-opt.active { background: var(--accent); color: #fff; }
+
+    /* highlight the label of the language that will be spoken */
+    .label-en.spoken, .label-zh.spoken, .label-th.spoken {
+      color: var(--accent);
+      font-weight: 800;
+    }
+
     /* "Add feeling" card */
     .add-btn {
       background: transparent;
@@ -285,12 +323,21 @@
 <body>
   <header>
     <h1>🩺 Patient Feeling Board</h1>
-    <p>病人感受沟通板 · English / 中文 · Speaks Thai when tapped</p>
+    <p>病人感受沟通板 · Speaks Thai / 中文 / English — you choose</p>
   </header>
 
   <div class="hint">
-    👆 Tap a card to hear the feeling spoken in Thai (ภาษาไทย).<br />
-    点击卡片，用泰语朗读该感受。
+    👆 Tap a card to hear the feeling spoken aloud.<br />
+    点击卡片，朗读该感受。
+  </div>
+
+  <div class="lang-bar">
+    <span class="lbl">🗣️ Speak in · 朗读语言：</span>
+    <div class="lang-seg" id="langSeg">
+      <button class="lang-opt" type="button" data-lang="th">ไทย Thai</button>
+      <button class="lang-opt" type="button" data-lang="zh">中文</button>
+      <button class="lang-opt" type="button" data-lang="en">English</button>
+    </div>
   </div>
 
   <div class="banner warn" id="banner" style="display:none"></div>
@@ -366,29 +413,47 @@
     const banner = document.getElementById("banner");
     const supportsSpeech = "speechSynthesis" in window;
 
-    let thaiVoice = null;
     let currentAudio = null; // the <audio> currently playing, if any
 
-    // ---- Browser fallback voice (used only when a recording is missing) ----
-    function pickThaiVoice() {
-      if (!supportsSpeech) return;
-      const voices = window.speechSynthesis.getVoices();
-      thaiVoice =
-        voices.find(v => v.lang && v.lang.toLowerCase().startsWith("th")) || null;
-    }
-    if (supportsSpeech) {
-      pickThaiVoice();
-      window.speechSynthesis.onvoiceschanged = pickThaiVoice;
+    // Which language is spoken on tap. th (default) | zh | en. Saved per browser.
+    const LANG_KEY = "fb_speak_lang_v1";
+    const LANGS = {
+      th: { code: "th-TH", tl: "th",    dir: "",    text: f => f.th, labelClass: "label-th" },
+      zh: { code: "zh-CN", tl: "zh-CN", dir: "zh",  text: f => f.zh, labelClass: "label-zh" },
+      en: { code: "en-US", tl: "en",    dir: "en",  text: f => f.en, labelClass: "label-en" }
+    };
+    let speakLang = "th";
+    try { const s = localStorage.getItem(LANG_KEY); if (s && LANGS[s]) speakLang = s; } catch (e) {}
+
+    // Pick text for the current language, falling back if a field is empty.
+    function speakTextFor(f) {
+      const cfg = LANGS[speakLang] || LANGS.th;
+      return (cfg.text(f) || "").trim() || (f.th || f.en || f.zh || "").trim();
     }
 
-    // Speak with the browser's built-in Thai voice. Returns false if the
-    // browser has no speech support at all (so the caller can try something else).
-    function speakWithBrowser(text, btn) {
+    // ---- Browser fallback voice (used only when no audio file is available) ----
+    let voiceList = [];
+    function refreshVoices() {
+      if (supportsSpeech) voiceList = window.speechSynthesis.getVoices() || [];
+    }
+    if (supportsSpeech) {
+      refreshVoices();
+      window.speechSynthesis.onvoiceschanged = refreshVoices;
+    }
+    function pickVoice(langCode) {
+      const pref = langCode.toLowerCase().split("-")[0];
+      return voiceList.find(v => v.lang && v.lang.toLowerCase().startsWith(pref)) || null;
+    }
+
+    // Speak with the browser's built-in voice for the given language code.
+    // Returns false if the browser has no speech support at all.
+    function speakWithBrowser(text, btn, langCode) {
       if (!supportsSpeech) return false;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "th-TH";
-      if (thaiVoice) utter.voice = thaiVoice;
+      utter.lang = langCode;
+      const v = pickVoice(langCode);
+      if (v) utter.voice = v;
       utter.rate = 0.9;
       setSpeaking(btn, true);
       utter.onend = () => setSpeaking(btn, false);
@@ -397,12 +462,13 @@
       return true;
     }
 
-    // Online Thai TTS. Played through an <audio> element, which can load
-    // cross-origin without CORS — so it works even in browsers that have no
-    // Speech Synthesis API and even when no local recording exists.
-    function onlineTtsUrl(text) {
+    // Online TTS for any language. Played through an <audio> element, which can
+    // load cross-origin without CORS — so it works even in browsers that have
+    // no Speech Synthesis API and even when no local audio file exists.
+    function onlineTtsUrl(text, tl) {
       return "https://translate.google.com/translate_tts" +
-        "?ie=UTF-8&tl=th&client=tw-ob&q=" + encodeURIComponent(text);
+        "?ie=UTF-8&tl=" + encodeURIComponent(tl) +
+        "&client=tw-ob&q=" + encodeURIComponent(text);
     }
 
     // ---- Playback: prefer the real recording, fall back to browser voice ----
@@ -441,24 +507,37 @@
       if (p && typeof p.catch === "function") p.catch(fail);
     }
 
-    // Sound chain, tried in order until one makes sound:
-    //   1. real recording      audio/<key>.mp3           (offline)  -> REC
-    //   2. bundled offline TTS  audio/tts/<key>.mp3       (offline)  -> TTS
-    //   3. online Thai TTS      (needs internet)                     -> TTS
-    //   4. browser Thai voice   (if the Speech API exists)           -> TTS
-    //   5. banner               (nothing available)
-    // Steps 1 and 2 are plain audio files, so they play in ANY browser with no
-    // internet and no Speech Synthesis API — the board is never silent.
+    // Sound chain for the currently-selected language, tried until one works:
+    //   1. clear audio file   audio/<key>.mp3 (Thai) or audio/<lang>/<key>.mp3
+    //   2. bundled offline    audio/tts/<key>.mp3  (Thai only)
+    //   3. online TTS         Google voice for the language (needs internet)
+    //   4. browser voice      the device's built-in voice for the language
+    //   5. banner             (nothing available)
+    // Steps 1 and 2 are plain files, so they play with no internet and no
+    // Speech Synthesis API. Built-in feelings have Thai files; other languages
+    // and custom feelings use steps 3/4.
     function play(f, btn) {
       stopEverything();
-      tryAudioSrc(AUDIO_DIR + f.key + ".mp3", btn, /*isRecording*/ true, () => {
-        tryAudioSrc(AUDIO_DIR + "tts/" + f.key + ".mp3", btn, /*isRecording*/ false, () => {
-          tryAudioSrc(onlineTtsUrl(f.th), btn, /*isRecording*/ false, () => {
-            if (!speakWithBrowser(f.th, btn)) {
-              showBanner("Couldn't play sound on this device.");
-            }
-          });
+      const cfg = LANGS[speakLang] || LANGS.th;
+      const text = speakTextFor(f);
+      const file1 = cfg.dir
+        ? AUDIO_DIR + cfg.dir + "/" + f.key + ".mp3"
+        : AUDIO_DIR + f.key + ".mp3";
+
+      const afterFiles = () =>
+        tryAudioSrc(onlineTtsUrl(text, cfg.tl), btn, false, () => {
+          if (!speakWithBrowser(text, btn, cfg.code)) {
+            showBanner("Couldn't play sound on this device.");
+          }
         });
+
+      tryAudioSrc(file1, btn, /*isPrimary*/ true, () => {
+        // Bundled offline fallback exists for Thai only.
+        if (speakLang === "th") {
+          tryAudioSrc(AUDIO_DIR + "tts/" + f.key + ".mp3", btn, false, afterFiles);
+        } else {
+          afterFiles();
+        }
       });
     }
 
@@ -515,13 +594,16 @@
       btn.className = "feeling-btn" + (isCustom ? " custom" : "");
       btn.setAttribute("type", "button");
       btn.setAttribute("aria-label", f.en + " / " + f.zh + " / " + f.th);
+      const sp = { en: "", zh: "", th: "" };
+      sp[speakLang] = " spoken";
+      const spk = l => (speakLang === l ? "🔊 " : "");
       btn.innerHTML = `
         <span class="src-badge" style="display:none"></span>
         ${isCustom ? '<span class="remove-btn" title="Remove">×</span>' : ""}
         <span class="pic" aria-hidden="true">${picFor(f)}</span>
-        <span class="label-en">${escapeHtml(f.en)}</span>
-        <span class="label-zh">${escapeHtml(f.zh)}</span>
-        <span class="label-th">🔊 ${escapeHtml(f.th)}</span>
+        <span class="label-en${sp.en}">${spk("en")}${escapeHtml(f.en)}</span>
+        <span class="label-zh${sp.zh}">${spk("zh")}${escapeHtml(f.zh)}</span>
+        <span class="label-th${sp.th}">${spk("th")}${escapeHtml(f.th)}</span>
       `;
       btn.addEventListener("click", () => play(f, btn));
       if (isCustom) {
@@ -617,10 +699,28 @@
     [inEn, inZh, inTh].forEach(el =>
       el.addEventListener("keydown", (e) => { if (e.key === "Enter") saveFeeling(); }));
 
+    // ---- Language selector ----
+    const langSeg = document.getElementById("langSeg");
+    function updateLangButtons() {
+      langSeg.querySelectorAll(".lang-opt").forEach(b =>
+        b.classList.toggle("active", b.dataset.lang === speakLang));
+    }
+    langSeg.querySelectorAll(".lang-opt").forEach(b => {
+      b.addEventListener("click", () => {
+        if (!LANGS[b.dataset.lang]) return;
+        speakLang = b.dataset.lang;
+        try { localStorage.setItem(LANG_KEY, speakLang); } catch (e) {}
+        stopEverything();
+        updateLangButtons();
+        render(); // refresh the 🔊 marker on every card
+      });
+    });
+    updateLangButtons();
+
     render();
 
-    // Built-in cards use bundled/generated audio; custom feelings speak their
-    // Thai text via online TTS (or the browser voice). Recordings load on tap.
+    // Built-in cards have Thai audio files; other languages and custom feelings
+    // speak via online TTS (or the browser voice). Files load on demand per tap.
   </script>
 </body>
 </html>

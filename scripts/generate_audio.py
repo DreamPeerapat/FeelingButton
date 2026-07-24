@@ -57,13 +57,28 @@ def gen_polly(feelings, voice, region):
         print(f"  ✓ {f['key']:9s} {f['th']}  ->  audio/{f['key']}.mp3")
 
 
+# gTTS language config: manifest field -> (gTTS lang code, output subdir).
+# Thai goes in audio/, other languages in audio/<subdir>/ to match index.html.
+GTTS_LANGS = [
+    ("th", "th", ""),
+    ("zh", "zh-CN", "zh"),
+    ("en", "en", "en"),
+]
+
+
 def gen_gtts(feelings):
     from gtts import gTTS  # noqa: WPS433
 
-    for f in feelings:
-        out = os.path.join(AUDIO_DIR, f["key"] + ".mp3")
-        gTTS(text=f["th"], lang="th").save(out)
-        print(f"  ✓ {f['key']:9s} {f['th']}  ->  audio/{f['key']}.mp3")
+    for field, lang_code, subdir in GTTS_LANGS:
+        out_dir = os.path.join(AUDIO_DIR, subdir) if subdir else AUDIO_DIR
+        os.makedirs(out_dir, exist_ok=True)
+        print(f"  [{field}] -> audio/{subdir + '/' if subdir else ''}<key>.mp3")
+        for f in feelings:
+            text = f.get(field)
+            if not text:
+                continue
+            gTTS(text=text, lang=lang_code).save(os.path.join(out_dir, f["key"] + ".mp3"))
+        print(f"     ✓ {len(feelings)} files")
 
 
 def main():
@@ -77,7 +92,7 @@ def main():
 
     os.makedirs(AUDIO_DIR, exist_ok=True)
     feelings = load_feelings()
-    print(f"Generating {len(feelings)} Thai audio files into audio/ ...")
+    print(f"Generating audio for {len(feelings)} feelings into audio/ ...")
 
     engine = args.engine
     if engine == "auto":
@@ -99,7 +114,7 @@ def main():
     except Exception as e:  # noqa: BLE001
         sys.exit(f"Generation failed with engine '{engine}': {e}")
 
-    print("Done. Reload index.html — cards now show 🟢 REC and play the files.")
+    print("Done. Reload index.html — the board now plays these clear voices.")
 
 
 if __name__ == "__main__":
