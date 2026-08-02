@@ -120,8 +120,8 @@ Cards are grouped into categories, each with a heading in all three languages:
 
 | Category | Cards |
 |----------|-------|
-| 🍚 **Basic Needs** · 基本需求 · ความต้องการพื้นฐาน | Hungry, Thirsty, Toilet, Bowel movement, Medicine |
-| 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest tightness, Heart racing, Painful urination, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
+| 🍚 **Basic Needs** · 基本需求 · ความต้องการพื้นฐาน | Hungry, Thirsty, Toilet, Pee, Bowel movement, Medicine |
+| 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest pain, Palpitation, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
 | 🙂 **Feelings** · 情绪 · อารมณ์ | Scared, Sad, Happy |
 | 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
 | 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bathing, Cleaning, Lift bottom, Blood test, Suction |

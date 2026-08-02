@@ -14,13 +14,13 @@ The `<key>` values come from [`../manifest.json`](../manifest.json). Cards with 
 | hungry | Basic Needs | Hungry | หิว |
 | thirsty | Basic Needs | Thirsty | หิวน้ำ |
 | toilet | Basic Needs | Toilet | เข้าห้องน้ำ |
+| pee | Basic Needs | I need to pee. | ฉันต้องการถ่ายปัสสาวะ |
 | bowel | Basic Needs | I need to have a bowel movement. | ถ่ายอุจจาระ |
 | medicine | Basic Needs | Medicine | อยากกินยา |
 | pain | Pain & Symptoms | Pain | เจ็บ |
 | backpain | Pain & Symptoms | I have back pain. | ปวดหลัง |
-| chestpain | Pain & Symptoms | I have chest tightness. | เจ็บแน่นอก |
-| palpitations | Pain & Symptoms | My heart is racing. | ใจสั่น |
-| urinepain | Pain & Symptoms | It hurts when I pee. | ปวดปัสสาวะ |
+| chestpain | Pain & Symptoms | Chest pain | เจ็บแน่นอก |
+| palpitations | Pain & Symptoms | Palpitation | ใจสั่น |
 | breath | Pain & Symptoms | Short of Breath | หายใจไม่ออก |
 | nausea | Pain & Symptoms | Nausea | คลื่นไส้ |
 | dizzy | Pain & Symptoms | Dizzy | เวียนหัว |
