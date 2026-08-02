@@ -65,6 +65,31 @@
       margin: 0 auto;
     }
 
+    /* Category sections */
+    .cat { max-width: 1000px; margin: 0 auto 30px; }
+    .cat-head {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin: 0 4px 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #dfe6f0;
+      font-size: 1.1rem;
+    }
+    .cat-icon { font-size: 1.25rem; }
+    .cat-name { font-weight: 800; color: var(--ink); }
+    .cat-sub { font-size: 0.88rem; font-weight: 600; color: var(--muted); }
+    .cat-count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 2px 9px;
+    }
+
     .feeling-btn {
       position: relative;
       background: var(--card);
@@ -121,6 +146,8 @@
       font-size: 1.15rem;
       font-weight: 700;
     }
+    /* Full-sentence labels get a smaller size so cards stay tidy. */
+    .label-en.long { font-size: 0.92rem; line-height: 1.3; }
 
     .label-zh {
       font-size: 1.05rem;
@@ -284,6 +311,17 @@
       color: var(--ink);
     }
     .field input:focus { outline: none; border-color: var(--accent); }
+    .field select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid #cdd6e3;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+    .field select:focus { outline: none; border-color: var(--accent); }
 
     .picker-label { font-weight: 600; font-size: 0.88rem; margin-bottom: 8px; }
     .picker {
@@ -387,7 +425,7 @@
 
   <div class="banner warn" id="banner" style="display:none"></div>
 
-  <main class="grid" id="grid"></main>
+  <main id="board"></main>
 
   <footer>
     Made for patient–caregiver communication · 医患沟通辅助工具<br />
@@ -413,6 +451,11 @@
       <div class="field">
         <label for="fTh">ภาษาไทย — spoken word (Thai)</label>
         <input id="fTh" type="text" placeholder="เช่น น้ำ" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="fCat">Category · 类别</label>
+        <select id="fCat"></select>
       </div>
 
       <div class="picker-label">Choose a picture · 选择图片</div>
@@ -441,32 +484,51 @@
 
   <script src="pictures.js"></script>
   <script>
+    // Card groups. Each feeling below carries a "cat" naming its category.
+    const CATEGORIES = [
+      { id: "needs",    icon: "🍚", en: "Basic Needs",     zh: "基本需求",   th: "ความต้องการพื้นฐาน" },
+      { id: "symptoms", icon: "🤕", en: "Pain & Symptoms", zh: "疼痛与症状", th: "อาการเจ็บป่วย" },
+      { id: "feelings", icon: "🙂", en: "Feelings",        zh: "情绪",       th: "อารมณ์" },
+      { id: "help",     icon: "🔔", en: "Requests & Help", zh: "请求与帮助", th: "คำขอและความช่วยเหลือ" },
+      { id: "custom",   icon: "⭐", en: "My Feelings",     zh: "自定义",     th: "เพิ่มเอง" }
+    ];
+
     // Each feeling has a stable "key" used for its audio file: audio/<key>.mp3
-    // Labels: emoji picture + English + Chinese. "th" is the spoken Thai word,
+    // Labels: picture + English + Chinese. "th" is the spoken Thai word,
     // used both for the on-screen text and as the browser fallback voice.
     const feelings = [
-      { key: "hungry",   emoji: "🍚", en: "Hungry",   zh: "饿了",   th: "หิว" },
-      { key: "thirsty",  emoji: "💧", en: "Thirsty",  zh: "口渴",   th: "หิวน้ำ" },
-      { key: "pain",     emoji: "🤕", en: "Pain",     zh: "疼痛",   th: "เจ็บ" },
-      { key: "sleepy",   emoji: "😴", en: "Sleepy",   zh: "困了",   th: "ง่วงนอน" },
-      { key: "tired",    emoji: "😫", en: "Tired",    zh: "累了",   th: "เหนื่อย" },
-      { key: "toilet",   emoji: "🚽", en: "Toilet",   zh: "上厕所", th: "เข้าห้องน้ำ" },
-      { key: "cold",     emoji: "🥶", en: "Cold",     zh: "冷",     th: "หนาว" },
-      { key: "hot",      emoji: "🥵", en: "Hot",      zh: "热",     th: "ร้อน" },
-      { key: "nausea",   emoji: "🤢", en: "Nausea",   zh: "恶心",   th: "คลื่นไส้" },
-      { key: "dizzy",    emoji: "😵‍💫", en: "Dizzy",  zh: "头晕",   th: "เวียนหัว" },
-      { key: "breath",   emoji: "😮‍💨", en: "Short of Breath", zh: "呼吸困难", th: "หายใจไม่ออก" },
-      { key: "itchy",    emoji: "🤧", en: "Itchy",    zh: "痒",     th: "คัน" },
-      { key: "scared",   emoji: "😟", en: "Scared",   zh: "害怕",   th: "กลัว" },
-      { key: "sad",      emoji: "😢", en: "Sad",      zh: "难过",   th: "เศร้า" },
-      { key: "happy",    emoji: "🙂", en: "Happy",    zh: "开心",   th: "มีความสุข" },
-      { key: "medicine", emoji: "💊", en: "Medicine", zh: "要吃药", th: "อยากกินยา" },
-      { key: "help",     emoji: "🩹", en: "Help",     zh: "需要帮助", th: "ช่วยด้วย" },
-      { key: "nurse",    emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" }
+      { key: "hungry",   cat: "needs", emoji: "🍚", en: "Hungry",   zh: "饿了",   th: "หิว" },
+      { key: "thirsty",  cat: "needs", emoji: "💧", en: "Thirsty",  zh: "口渴",   th: "หิวน้ำ" },
+      { key: "toilet",   cat: "needs", emoji: "🚽", en: "Toilet",   zh: "上厕所", th: "เข้าห้องน้ำ" },
+      { key: "bowel",    cat: "needs", emoji: "🚽", en: "I need to have a bowel movement.", zh: "想大便", th: "ถ่ายอุจจาระ" },
+      { key: "medicine", cat: "needs", emoji: "💊", en: "Medicine", zh: "要吃药", th: "อยากกินยา" },
+
+      { key: "pain",         cat: "symptoms", emoji: "🤕", en: "Pain",     zh: "疼痛",   th: "เจ็บ" },
+      { key: "backpain",     cat: "symptoms", emoji: "🤕", en: "I have back pain.",       zh: "后背痛",   th: "ปวดหลัง" },
+      { key: "chestpain",    cat: "symptoms", emoji: "❤️", en: "I have chest tightness.", zh: "胸口紧痛", th: "เจ็บแน่นอก" },
+      { key: "palpitations", cat: "symptoms", emoji: "💓", en: "My heart is racing.",     zh: "心跳加快", th: "ใจสั่น" },
+      { key: "urinepain",    cat: "symptoms", emoji: "🚽", en: "It hurts when I pee.",    zh: "小便痛",   th: "ปวดปัสสาวะ" },
+      { key: "breath",   cat: "symptoms", emoji: "😮‍💨", en: "Short of Breath", zh: "呼吸困难", th: "หายใจไม่ออก" },
+      { key: "nausea",   cat: "symptoms", emoji: "🤢", en: "Nausea",   zh: "恶心",   th: "คลื่นไส้" },
+      { key: "dizzy",    cat: "symptoms", emoji: "😵‍💫", en: "Dizzy",  zh: "头晕",   th: "เวียนหัว" },
+      { key: "itchy",    cat: "symptoms", emoji: "🤧", en: "Itchy",    zh: "痒",     th: "คัน" },
+      { key: "cold",     cat: "symptoms", emoji: "🥶", en: "Cold",     zh: "冷",     th: "หนาว" },
+      { key: "hot",      cat: "symptoms", emoji: "🥵", en: "Hot",      zh: "热",     th: "ร้อน" },
+      { key: "tired",    cat: "symptoms", emoji: "😫", en: "Tired",    zh: "累了",   th: "เหนื่อย" },
+      { key: "sleepy",   cat: "symptoms", emoji: "😴", en: "Sleepy",   zh: "困了",   th: "ง่วงนอน" },
+
+      { key: "scared",   cat: "feelings", emoji: "😟", en: "Scared",   zh: "害怕",   th: "กลัว" },
+      { key: "sad",      cat: "feelings", emoji: "😢", en: "Sad",      zh: "难过",   th: "เศร้า" },
+      { key: "happy",    cat: "feelings", emoji: "🙂", en: "Happy",    zh: "开心",   th: "มีความสุข" },
+
+      { key: "help",     cat: "help", emoji: "🩹", en: "Help",     zh: "需要帮助", th: "ช่วยด้วย" },
+      { key: "nurse",      cat: "help", emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" },
+      { key: "talkdoctor", cat: "help", emoji: "👨‍⚕️", en: "I want to talk to the doctor.", zh: "想和医生谈", th: "อยากคุยกับหมอ" },
+      { key: "gohome",     cat: "help", emoji: "🏠", en: "I want to go home.", zh: "想回家", th: "อยากกลับบ้าน" }
     ];
 
     const AUDIO_DIR = "audio/";
-    const grid = document.getElementById("grid");
+    const board = document.getElementById("board");
     const banner = document.getElementById("banner");
     const supportsSpeech = "speechSynthesis" in window;
 
@@ -644,7 +706,9 @@
     // Keys that have a hand-drawn illustration in images/<key>.png.
     const IMAGE_KEYS = new Set([
       "hungry", "thirsty", "pain", "sleepy", "tired", "toilet", "cold", "hot",
-      "nausea", "dizzy", "breath", "itchy", "scared", "sad", "happy"
+      "nausea", "dizzy", "breath", "itchy", "scared", "sad", "happy",
+      "backpain", "chestpain", "palpitations", "gohome", "talkdoctor",
+      "urinepain", "bowel"
     ]);
 
     function picFor(f) {
@@ -670,7 +734,7 @@
         <span class="src-badge" style="display:none"></span>
         ${isCustom ? '<span class="remove-btn" title="Remove">×</span>' : ""}
         <span class="pic" aria-hidden="true">${picFor(f)}</span>
-        <span class="label-en${sp.en}">${spk("en")}${escapeHtml(f.en)}</span>
+        <span class="label-en${sp.en}${(f.en || "").length > 16 ? " long" : ""}">${spk("en")}${escapeHtml(f.en)}</span>
         <span class="label-zh${sp.zh}">${spk("zh")}${escapeHtml(f.zh)}</span>
         <span class="label-th${sp.th}">${spk("th")}${escapeHtml(f.th)}</span>
       `;
@@ -684,12 +748,8 @@
       return btn;
     }
 
-    // ---- Render the whole board ----
-    function render() {
-      grid.innerHTML = "";
-      feelings.forEach(f => grid.appendChild(makeCard(f, false)));
-      loadCustom().forEach(f => grid.appendChild(makeCard(f, true)));
-
+    // ---- Render the whole board, grouped into categories ----
+    function makeAddButton() {
       const add = document.createElement("button");
       add.className = "add-btn";
       add.setAttribute("type", "button");
@@ -697,7 +757,40 @@
         <span class="add-label">Add feeling</span>
         <span style="font-size:0.8rem;">添加感受</span>`;
       add.addEventListener("click", openModal);
-      grid.appendChild(add);
+      return add;
+    }
+
+    function render() {
+      board.innerHTML = "";
+      const custom = loadCustom();
+
+      CATEGORIES.forEach(cat => {
+        const mine = cat.id === "custom";
+        // Built-in cards plus any user-added ones filed under this category.
+        const items = feelings.filter(f => f.cat === cat.id)
+          .concat(custom.filter(f => (f.cat || "custom") === cat.id));
+        // Skip an empty category, but always show "My Feelings" (it holds ＋).
+        if (!items.length && !mine) return;
+
+        const section = document.createElement("section");
+        section.className = "cat";
+
+        const head = document.createElement("h2");
+        head.className = "cat-head";
+        head.innerHTML =
+          `<span class="cat-icon" aria-hidden="true">${cat.icon}</span>
+           <span class="cat-name">${escapeHtml(cat.en)}</span>
+           <span class="cat-sub">${escapeHtml(cat.zh)} · ${escapeHtml(cat.th)}</span>
+           <span class="cat-count">${items.length}</span>`;
+        section.appendChild(head);
+
+        const g = document.createElement("div");
+        g.className = "grid";
+        items.forEach(f => g.appendChild(makeCard(f, f.custom === true)));
+        if (mine) g.appendChild(makeAddButton());
+        section.appendChild(g);
+        board.appendChild(section);
+      });
     }
 
     function removeCustom(key) {
@@ -712,7 +805,17 @@
     const inZh = document.getElementById("fZh");
     const inTh = document.getElementById("fTh");
     const formError = document.getElementById("formError");
+    const inCat = document.getElementById("fCat");
     let selectedPicKey = null;
+
+    // Category dropdown — new feelings default to "My Feelings".
+    CATEGORIES.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = c.icon + "  " + c.en + " · " + c.zh;
+      inCat.appendChild(o);
+    });
+    inCat.value = "custom";
 
     // Build the picture picker: illustrations first, then any SVG-only icons.
     function addPick(key, inner) {
@@ -829,6 +932,7 @@
 
     function openModal() {
       inEn.value = ""; inZh.value = ""; inTh.value = "";
+      inCat.value = "custom";
       formError.textContent = "";
       selectedPicKey = null;
       clearUpload();
@@ -851,6 +955,7 @@
       const list = loadCustom();
       const entry = {
         key: "custom_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        cat: inCat.value || "custom",
         en: en, zh: zh, th: th, custom: true
       };
       if (uploadedData) entry.imgData = uploadedData;

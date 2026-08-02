@@ -6,28 +6,35 @@ The board plays one file per feeling from this folder:
 audio/<key>.mp3
 ```
 
-The `<key>` values come from [`../manifest.json`](../manifest.json). All 18:
+The `<key>` values come from [`../manifest.json`](../manifest.json). All 25:
 
-| key | English | Thai (say this) |
-|-----|---------|-----------------|
-| hungry   | Hungry          | หิว |
-| thirsty  | Thirsty         | หิวน้ำ |
-| pain     | Pain            | เจ็บ |
-| sleepy   | Sleepy          | ง่วงนอน |
-| tired    | Tired           | เหนื่อย |
-| toilet   | Toilet          | เข้าห้องน้ำ |
-| cold     | Cold            | หนาว |
-| hot      | Hot             | ร้อน |
-| nausea   | Nausea          | คลื่นไส้ |
-| dizzy    | Dizzy           | เวียนหัว |
-| breath   | Short of Breath | หายใจไม่ออก |
-| itchy    | Itchy           | คัน |
-| scared   | Scared          | กลัว |
-| sad      | Sad             | เศร้า |
-| happy    | Happy           | มีความสุข |
-| medicine | Medicine        | อยากกินยา |
-| help     | Help            | ช่วยด้วย |
-| nurse    | Call Nurse      | เรียกพยาบาล |
+| key | category | English | Thai (say this) |
+|-----|----------|---------|-----------------|
+| hungry | Basic Needs | Hungry | หิว |
+| thirsty | Basic Needs | Thirsty | หิวน้ำ |
+| toilet | Basic Needs | Toilet | เข้าห้องน้ำ |
+| bowel | Basic Needs | I need to have a bowel movement. | ถ่ายอุจจาระ |
+| medicine | Basic Needs | Medicine | อยากกินยา |
+| pain | Pain & Symptoms | Pain | เจ็บ |
+| backpain | Pain & Symptoms | I have back pain. | ปวดหลัง |
+| chestpain | Pain & Symptoms | I have chest tightness. | เจ็บแน่นอก |
+| palpitations | Pain & Symptoms | My heart is racing. | ใจสั่น |
+| urinepain | Pain & Symptoms | It hurts when I pee. | ปวดปัสสาวะ |
+| breath | Pain & Symptoms | Short of Breath | หายใจไม่ออก |
+| nausea | Pain & Symptoms | Nausea | คลื่นไส้ |
+| dizzy | Pain & Symptoms | Dizzy | เวียนหัว |
+| itchy | Pain & Symptoms | Itchy | คัน |
+| cold | Pain & Symptoms | Cold | หนาว |
+| hot | Pain & Symptoms | Hot | ร้อน |
+| tired | Pain & Symptoms | Tired | เหนื่อย |
+| sleepy | Pain & Symptoms | Sleepy | ง่วงนอน |
+| scared | Feelings | Scared | กลัว |
+| sad | Feelings | Sad | เศร้า |
+| happy | Feelings | Happy | มีความสุข |
+| help | Requests & Help | Help | ช่วยด้วย |
+| nurse | Requests & Help | Call Nurse | เรียกพยาบาล |
+| talkdoctor | Requests & Help | I want to talk to the doctor. | อยากคุยกับหมอ |
+| gohome | Requests & Help | I want to go home. | อยากกลับบ้าน |
 
 ## Two ways to fill this folder
 

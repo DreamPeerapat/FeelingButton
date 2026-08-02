@@ -1,24 +1,40 @@
 {
-  "description": "Filename <-> phrase map for the Patient Feeling Board. Each audio file lives at audio/<key>.mp3 and should say the Thai phrase below.",
+  "description": "Filename <-> phrase map for the Patient Feeling Board. Each audio file lives at audio/<key>.mp3 (Thai) or audio/<lang>/<key>.mp3, and says the phrase below. 'cat' is the category the card is grouped under.",
   "language": { "spoken": "th-TH" },
+  "categories": [
+    { "id": "needs",    "en": "Basic Needs",     "zh": "基本需求",   "th": "ความต้องการพื้นฐาน" },
+    { "id": "symptoms", "en": "Pain & Symptoms", "zh": "疼痛与症状", "th": "อาการเจ็บป่วย" },
+    { "id": "feelings", "en": "Feelings",        "zh": "情绪",       "th": "อารมณ์" },
+    { "id": "help",     "en": "Requests & Help", "zh": "请求与帮助", "th": "คำขอและความช่วยเหลือ" }
+  ],
   "feelings": [
-    { "key": "hungry",   "en": "Hungry",           "zh": "饿了",     "th": "หิว" },
-    { "key": "thirsty",  "en": "Thirsty",          "zh": "口渴",     "th": "หิวน้ำ" },
-    { "key": "pain",     "en": "Pain",             "zh": "疼痛",     "th": "เจ็บ" },
-    { "key": "sleepy",   "en": "Sleepy",           "zh": "困了",     "th": "ง่วงนอน" },
-    { "key": "tired",    "en": "Tired",            "zh": "累了",     "th": "เหนื่อย" },
-    { "key": "toilet",   "en": "Toilet",           "zh": "上厕所",   "th": "เข้าห้องน้ำ" },
-    { "key": "cold",     "en": "Cold",             "zh": "冷",       "th": "หนาว" },
-    { "key": "hot",      "en": "Hot",              "zh": "热",       "th": "ร้อน" },
-    { "key": "nausea",   "en": "Nausea",           "zh": "恶心",     "th": "คลื่นไส้" },
-    { "key": "dizzy",    "en": "Dizzy",            "zh": "头晕",     "th": "เวียนหัว" },
-    { "key": "breath",   "en": "Short of Breath",  "zh": "呼吸困难", "th": "หายใจไม่ออก" },
-    { "key": "itchy",    "en": "Itchy",            "zh": "痒",       "th": "คัน" },
-    { "key": "scared",   "en": "Scared",           "zh": "害怕",     "th": "กลัว" },
-    { "key": "sad",      "en": "Sad",              "zh": "难过",     "th": "เศร้า" },
-    { "key": "happy",    "en": "Happy",            "zh": "开心",     "th": "มีความสุข" },
-    { "key": "medicine", "en": "Medicine",         "zh": "要吃药",   "th": "อยากกินยา" },
-    { "key": "help",     "en": "Help",             "zh": "需要帮助", "th": "ช่วยด้วย" },
-    { "key": "nurse",    "en": "Call Nurse",       "zh": "叫护士",   "th": "เรียกพยาบาล" }
+    { "key": "hungry",       "cat": "needs",    "en": "Hungry",                          "zh": "饿了",     "th": "หิว" },
+    { "key": "thirsty",      "cat": "needs",    "en": "Thirsty",                         "zh": "口渴",     "th": "หิวน้ำ" },
+    { "key": "toilet",       "cat": "needs",    "en": "Toilet",                          "zh": "上厕所",   "th": "เข้าห้องน้ำ" },
+    { "key": "bowel",        "cat": "needs",    "en": "I need to have a bowel movement.", "zh": "想大便",  "th": "ถ่ายอุจจาระ" },
+    { "key": "medicine",     "cat": "needs",    "en": "Medicine",                        "zh": "要吃药",   "th": "อยากกินยา" },
+
+    { "key": "pain",         "cat": "symptoms", "en": "Pain",                            "zh": "疼痛",     "th": "เจ็บ" },
+    { "key": "backpain",     "cat": "symptoms", "en": "I have back pain.",               "zh": "后背痛",   "th": "ปวดหลัง" },
+    { "key": "chestpain",    "cat": "symptoms", "en": "I have chest tightness.",         "zh": "胸口紧痛", "th": "เจ็บแน่นอก" },
+    { "key": "palpitations", "cat": "symptoms", "en": "My heart is racing.",             "zh": "心跳加快", "th": "ใจสั่น" },
+    { "key": "urinepain",    "cat": "symptoms", "en": "It hurts when I pee.",            "zh": "小便痛",   "th": "ปวดปัสสาวะ" },
+    { "key": "breath",       "cat": "symptoms", "en": "Short of Breath",                 "zh": "呼吸困难", "th": "หายใจไม่ออก" },
+    { "key": "nausea",       "cat": "symptoms", "en": "Nausea",                          "zh": "恶心",     "th": "คลื่นไส้" },
+    { "key": "dizzy",        "cat": "symptoms", "en": "Dizzy",                           "zh": "头晕",     "th": "เวียนหัว" },
+    { "key": "itchy",        "cat": "symptoms", "en": "Itchy",                           "zh": "痒",       "th": "คัน" },
+    { "key": "cold",         "cat": "symptoms", "en": "Cold",                            "zh": "冷",       "th": "หนาว" },
+    { "key": "hot",          "cat": "symptoms", "en": "Hot",                             "zh": "热",       "th": "ร้อน" },
+    { "key": "tired",        "cat": "symptoms", "en": "Tired",                           "zh": "累了",     "th": "เหนื่อย" },
+    { "key": "sleepy",       "cat": "symptoms", "en": "Sleepy",                          "zh": "困了",     "th": "ง่วงนอน" },
+
+    { "key": "scared",       "cat": "feelings", "en": "Scared",                          "zh": "害怕",     "th": "กลัว" },
+    { "key": "sad",          "cat": "feelings", "en": "Sad",                             "zh": "难过",     "th": "เศร้า" },
+    { "key": "happy",        "cat": "feelings", "en": "Happy",                           "zh": "开心",     "th": "มีความสุข" },
+
+    { "key": "help",         "cat": "help",     "en": "Help",                            "zh": "需要帮助", "th": "ช่วยด้วย" },
+    { "key": "nurse",        "cat": "help",     "en": "Call Nurse",                      "zh": "叫护士",   "th": "เรียกพยาบาล" },
+    { "key": "talkdoctor",   "cat": "help",     "en": "I want to talk to the doctor.",   "zh": "想和医生谈", "th": "อยากคุยกับหมอ" },
+    { "key": "gohome",       "cat": "help",     "en": "I want to go home.",              "zh": "想回家",   "th": "อยากกลับบ้าน" }
   ]
 }

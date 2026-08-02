@@ -114,10 +114,20 @@ scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
 .github/workflows/static.yml      deploys to Pages + generates clear audio
 ```
 
-## Feelings included (18)
+## Categories and feelings (25)
 
-Hungry, Thirsty, Pain, Sleepy, Tired, Toilet, Cold, Hot, Nausea, Dizzy, Short of
-Breath, Itchy, Scared, Sad, Happy, Medicine, Help, Call Nurse.
+Cards are grouped into categories, each with a heading in all three languages:
+
+| Category | Cards |
+|----------|-------|
+| 🍚 **Basic Needs** · 基本需求 · ความต้องการพื้นฐาน | Hungry, Thirsty, Toilet, Bowel movement, Medicine |
+| 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest tightness, Heart racing, Painful urination, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
+| 🙂 **Feelings** · 情绪 · อารมณ์ | Scared, Sad, Happy |
+| 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
+| ⭐ **My Feelings** · 自定义 · เพิ่มเอง | Anything you add yourself |
+
+When adding a feeling you pick which category it belongs to, so it can join a
+built-in group instead of only "My Feelings".
 
 ## Notes
 
