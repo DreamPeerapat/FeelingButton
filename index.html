@@ -553,6 +553,10 @@
       { key: "nurse",      cat: "help", emoji: "👨‍⚕️", en: "Call Nurse", zh: "叫护士", th: "เรียกพยาบาล" },
       { key: "talkdoctor", cat: "help", emoji: "👨‍⚕️", en: "I want to talk to the doctor.", zh: "想和医生谈", th: "อยากคุยกับหมอ" },
       { key: "gohome",     cat: "help", emoji: "🏠", en: "I want to go home.", zh: "想回家", th: "อยากกลับบ้าน" },
+      { key: "tubeout",    cat: "help", emoji: "🫁", en: "I want the breathing tube out.", zh: "想拔掉呼吸管", th: "อยากท่อช่วยหายใจออก",
+        say: { en: "I want the breathing tube out. It's uncomfortable.",
+               zh: "我想拔掉呼吸管，呼吸不舒服。",
+               th: "อยากเอาท่อช่วยหายใจออก หายใจไม่สบาย" } },
 
       // Staff-to-patient cards. "say" holds the full sentence that is spoken;
       // en/zh/th stay the short label shown on the card.
@@ -790,7 +794,7 @@
       "backpain", "chestpain", "palpitations", "gohome", "talkdoctor",
       "pee", "bowel",
       "bathe", "cleanbottom", "liftbottom", "bloodtest", "suction",
-      "staystill", "nobendleg", "nositup", "thanks", "callhelp"
+      "staystill", "nobendleg", "nositup", "thanks", "callhelp", "tubeout"
     ]);
 
     function picFor(f) {

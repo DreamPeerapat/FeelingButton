@@ -39,6 +39,10 @@
     { "key": "nurse",        "cat": "help",     "en": "Call Nurse",                      "zh": "叫护士",   "th": "เรียกพยาบาล" },
     { "key": "talkdoctor",   "cat": "help",     "en": "I want to talk to the doctor.",   "zh": "想和医生谈", "th": "อยากคุยกับหมอ" },
     { "key": "gohome",       "cat": "help",     "en": "I want to go home.",              "zh": "想回家",   "th": "อยากกลับบ้าน" },
+    { "key": "tubeout",      "cat": "help",     "en": "I want the breathing tube out.",  "zh": "想拔掉呼吸管", "th": "อยากท่อช่วยหายใจออก",
+      "say": { "en": "I want the breathing tube out. It's uncomfortable.",
+               "zh": "我想拔掉呼吸管，呼吸不舒服。",
+               "th": "อยากเอาท่อช่วยหายใจออก หายใจไม่สบาย" } },
 
     { "key": "bathe",       "cat": "care", "en": "Bed Bath",     "zh": "洗澡",     "th": "อาบน้ำ",
       "say": { "en": "The nurse will give you a bed bath to keep you clean and comfortable.",

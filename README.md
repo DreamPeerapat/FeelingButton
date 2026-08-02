@@ -72,7 +72,7 @@ voice) — no build step needed for them.
 ## Pictures
 
 Most cards use a **hand-drawn illustration** of a patient acting out the feeling,
-stored as `images/<key>.png` (32 of the 35 cards). The three without one
+stored as `images/<key>.png` (33 of the 36 cards). The three without one
 (Medicine, Help, Call Nurse) fall back to a **custom SVG icon** from
 [`pictures.js`](pictures.js); emoji are the final fallback. The add-feeling
 picker offers both the illustrations and the SVG icons to choose from.
@@ -105,7 +105,7 @@ The filename ↔ phrase map lives in [`manifest.json`](manifest.json).
 ```
 index.html                        The board (open this)
 pictures.js                       custom SVG illustration for each feeling
-manifest.json                     key -> {English, Chinese, Thai} for all 35
+manifest.json                     key -> {English, Chinese, Thai} for all 36
 audio/<key>.mp3                   clear voice: CI (gTTS) / Polly / human (priority)
 audio/tts/<key>.mp3               bundled offline voice (always present)
 scripts/generate_audio.py         make clear Thai MP3s (gTTS or Polly)
@@ -113,7 +113,7 @@ scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
 .github/workflows/static.yml      deploys to Pages + generates clear audio
 ```
 
-## Categories and cards (35)
+## Categories and cards (36)
 
 Cards are grouped into categories, each with a heading in all three languages:
 
@@ -122,7 +122,7 @@ Cards are grouped into categories, each with a heading in all three languages:
 | 🍚 **Basic Needs** · 基本需求 · ความต้องการพื้นฐาน | Hungry, Thirsty, Toilet, Pee, Bowel movement, Medicine |
 | 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest pain, Palpitation, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
 | 🙂 **Feelings** · 情绪 · อารมณ์ | Scared, Sad, Happy |
-| 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
+| 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home, Breathing tube out |
 | 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bed Bath, Peri Care, Lift Your Hips, Blood Test, Suctioning |
 | ⚠️ **Please / Do Not** · 注意事项 · ข้อควรปฏิบัติ | Please Stay Still, Do Not Bend Your Legs, Do Not Sit Up or Get Up |
 | 💬 **Staff Messages** · 工作人员的话 · คำพูดจากเจ้าหน้าที่ | Thank You, Call for Help |
