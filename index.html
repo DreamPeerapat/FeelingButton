@@ -540,37 +540,37 @@
 
       // Staff-to-patient cards. "say" holds the full sentence that is spoken;
       // en/zh/th stay the short label shown on the card.
-      { key: "bathe", cat: "care", emoji: "🚿", en: "Bathing", zh: "洗澡", th: "อาบน้ำ",
-        say: { en: "The staff will help you bathe, to keep you clean and comfortable.",
+      { key: "bathe", cat: "care", emoji: "🚿", en: "Bed Bath", zh: "洗澡", th: "อาบน้ำ",
+        say: { en: "The nurse will give you a bed bath to keep you clean and comfortable.",
                zh: "工作人员会帮您洗澡，保持清洁舒适。",
                th: "เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว" } },
-      { key: "cleanbottom", cat: "care", emoji: "🧼", en: "Cleaning", zh: "清洗臀部", th: "ล้างก้น",
-        say: { en: "The staff will help clean your bottom, for hygiene.",
+      { key: "cleanbottom", cat: "care", emoji: "🧼", en: "Peri Care", zh: "清洗臀部", th: "ล้างก้น",
+        say: { en: "The nurse will clean your bottom area to keep you clean and prevent infection.",
                zh: "工作人员会帮您清洗臀部，保持卫生。",
                th: "เจ้าหน้าที่จะช่วยล้างทำความสะอาดก้น เพื่อสุขอนามัย" } },
-      { key: "liftbottom", cat: "care", emoji: "🛏️", en: "Lift Bottom", zh: "抬起臀部", th: "ยกก้น",
-        say: { en: "The staff will help lift your bottom to change the pad or sheet.",
+      { key: "liftbottom", cat: "care", emoji: "🛏️", en: "Lift Your Hips", zh: "抬起臀部", th: "ยกก้น",
+        say: { en: "The nurse will lift your hips to change the pad and prevent bedsores.",
                zh: "工作人员会帮您抬起臀部，更换尿垫或床单。",
                th: "เจ้าหน้าที่จะช่วยยกก้น เพื่อเปลี่ยนผ้าหรือแผ่นรอง" } },
       { key: "bloodtest", cat: "care", emoji: "💉", en: "Blood Test", zh: "抽血", th: "พยาบาลจะเจาะเลือด",
-        say: { en: "The nurse will draw blood for tests.",
+        say: { en: "The nurse will draw blood to check your health.",
                zh: "护士要为您抽血，用于身体检查。",
                th: "พยาบาลจะเจาะเลือด เพื่อตรวจร่างกาย" } },
-      { key: "suction", cat: "care", emoji: "🫁", en: "Suction", zh: "吸痰", th: "พยาบาลจะดูดเสมหะ",
-        say: { en: "The nurse will suction phlegm to help you breathe more easily.",
+      { key: "suction", cat: "care", emoji: "🫁", en: "Suctioning", zh: "吸痰", th: "พยาบาลจะดูดเสมหะ",
+        say: { en: "The nurse will suction to help clear mucus and make breathing easier.",
                zh: "护士要为您吸痰，帮助呼吸顺畅。",
                th: "พยาบาลจะดูดเสมหะ เพื่อช่วยให้หายใจสะดวก" } },
 
-      { key: "staystill", cat: "rules", emoji: "🤫", en: "Stay Still", zh: "请保持不动", th: "กรุณาอยู่นิ่งๆ",
-        say: { en: "Please stay still, for your safety.",
+      { key: "staystill", cat: "rules", emoji: "🤫", en: "Please Stay Still", zh: "请保持不动", th: "กรุณาอยู่นิ่งๆ",
+        say: { en: "Please stay still and relax while we take care of you.",
                zh: "请保持不动，以确保安全。",
                th: "กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย" } },
-      { key: "nobendleg", cat: "rules", emoji: "🚫", en: "Do Not Bend Leg", zh: "请勿弯腿", th: "ห้ามงอขา",
-        say: { en: "Please do not bend your leg, to prevent bleeding.",
+      { key: "nobendleg", cat: "rules", emoji: "🚫", en: "Do Not Bend Your Legs", zh: "请勿弯腿", th: "ห้ามงอขา",
+        say: { en: "Please keep your legs straight and do not bend your knees.",
                zh: "请勿弯腿，以防出血。",
                th: "ห้ามงอขา เพื่อป้องกันการเลือดออก" } },
-      { key: "nositup", cat: "rules", emoji: "🚫", en: "Do Not Sit Up", zh: "请勿坐起", th: "ห้ามลุกนั่ง",
-        say: { en: "Please do not sit up, for your safety.",
+      { key: "nositup", cat: "rules", emoji: "🚫", en: "Do Not Sit Up or Get Up", zh: "请勿坐起", th: "ห้ามลุกนั่ง",
+        say: { en: "Please do not sit up or get out of bed by yourself.",
                zh: "请勿坐起，以确保安全。",
                th: "ห้ามลุกนั่ง เพื่อความปลอดภัย" } }
     ];
@@ -778,6 +778,13 @@
       return PICS[key] || ('<span class="emoji">' + (f.emoji || "🩹") + "</span>");
     }
 
+    // Full sentences get a smaller label so cards stay tidy; short titles like
+    // "Do Not Bend Your Legs" keep the big bold size.
+    function isSentence(text) {
+      const t = (text || "").trim();
+      return /[.!?]$/.test(t) || t.length > 22;
+    }
+
     // ---- Build one feeling card ----
     function makeCard(f, isCustom) {
       const btn = document.createElement("button");
@@ -791,7 +798,7 @@
         <span class="src-badge" style="display:none"></span>
         ${isCustom ? '<span class="remove-btn" title="Remove">×</span>' : ""}
         <span class="pic" aria-hidden="true">${picFor(f)}</span>
-        <span class="label-en${sp.en}${(f.en || "").length > 16 ? " long" : ""}">${spk("en")}${escapeHtml(f.en)}</span>
+        <span class="label-en${sp.en}${isSentence(f.en) ? " long" : ""}">${spk("en")}${escapeHtml(f.en)}</span>
         <span class="label-zh${sp.zh}">${spk("zh")}${escapeHtml(f.zh)}</span>
         <span class="label-th${sp.th}">${spk("th")}${escapeHtml(f.th)}</span>
         ${noteFor(f) ? '<span class="label-note">' + escapeHtml(noteFor(f)) + "</span>" : ""}

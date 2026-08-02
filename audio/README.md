@@ -36,14 +36,14 @@ The `<key>` values come from [`../manifest.json`](../manifest.json). Cards with 
 | nurse | Requests & Help | Call Nurse | เรียกพยาบาล |
 | talkdoctor | Requests & Help | I want to talk to the doctor. | อยากคุยกับหมอ |
 | gohome | Requests & Help | I want to go home. | อยากกลับบ้าน |
-| bathe | Care & Procedures | Bathing | เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว |
-| cleanbottom | Care & Procedures | Cleaning | เจ้าหน้าที่จะช่วยล้างทำความสะอาดก้น เพื่อสุขอนามัย |
-| liftbottom | Care & Procedures | Lift Bottom | เจ้าหน้าที่จะช่วยยกก้น เพื่อเปลี่ยนผ้าหรือแผ่นรอง |
+| bathe | Care & Procedures | Bed Bath | เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว |
+| cleanbottom | Care & Procedures | Peri Care | เจ้าหน้าที่จะช่วยล้างทำความสะอาดก้น เพื่อสุขอนามัย |
+| liftbottom | Care & Procedures | Lift Your Hips | เจ้าหน้าที่จะช่วยยกก้น เพื่อเปลี่ยนผ้าหรือแผ่นรอง |
 | bloodtest | Care & Procedures | Blood Test | พยาบาลจะเจาะเลือด เพื่อตรวจร่างกาย |
-| suction | Care & Procedures | Suction | พยาบาลจะดูดเสมหะ เพื่อช่วยให้หายใจสะดวก |
-| staystill | Please / Do Not | Stay Still | กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย |
-| nobendleg | Please / Do Not | Do Not Bend Leg | ห้ามงอขา เพื่อป้องกันการเลือดออก |
-| nositup | Please / Do Not | Do Not Sit Up | ห้ามลุกนั่ง เพื่อความปลอดภัย |
+| suction | Care & Procedures | Suctioning | พยาบาลจะดูดเสมหะ เพื่อช่วยให้หายใจสะดวก |
+| staystill | Please / Do Not | Please Stay Still | กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย |
+| nobendleg | Please / Do Not | Do Not Bend Your Legs | ห้ามงอขา เพื่อป้องกันการเลือดออก |
+| nositup | Please / Do Not | Do Not Sit Up or Get Up | ห้ามลุกนั่ง เพื่อความปลอดภัย |
 
 ## Two ways to fill this folder
 

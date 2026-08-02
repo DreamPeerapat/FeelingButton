@@ -1,8 +1,7 @@
 # Patient Feeling Board · 病人感受板
 
 A single-page communication board that helps patients tell caregivers how they
-feel. Each card shows a **picture (emoji)** with **English** and **Chinese**
-labels. Tapping a card **plays the feeling out loud in Thai** — for example,
+feel. Each card shows a **picture** with **English** and **Chinese** labels. Tapping a card **plays the feeling out loud in Thai** — for example,
 the *Hungry* card says **"หิว"**.
 
 ## How to use
@@ -73,7 +72,7 @@ voice) — no build step needed for them.
 ## Pictures
 
 Most cards use a **hand-drawn illustration** of a patient acting out the feeling,
-stored as `images/<key>.png` (15 feelings). The three without an illustration
+stored as `images/<key>.png` (30 of the 33 cards). The three without one
 (Medicine, Help, Call Nurse) fall back to a **custom SVG icon** from
 [`pictures.js`](pictures.js); emoji are the final fallback. The add-feeling
 picker offers both the illustrations and the SVG icons to choose from.
@@ -106,7 +105,7 @@ The filename ↔ phrase map lives in [`manifest.json`](manifest.json).
 ```
 index.html                        The board (open this)
 pictures.js                       custom SVG illustration for each feeling
-manifest.json                     key -> {English, Chinese, Thai} for all 18
+manifest.json                     key -> {English, Chinese, Thai} for all 33
 audio/<key>.mp3                   clear voice: CI (gTTS) / Polly / human (priority)
 audio/tts/<key>.mp3               bundled offline voice (always present)
 scripts/generate_audio.py         make clear Thai MP3s (gTTS or Polly)
@@ -124,8 +123,8 @@ Cards are grouped into categories, each with a heading in all three languages:
 | 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest pain, Palpitation, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
 | 🙂 **Feelings** · 情绪 · อารมณ์ | Scared, Sad, Happy |
 | 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
-| 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bathing, Cleaning, Lift bottom, Blood test, Suction |
-| ⚠️ **Please / Do Not** · 注意事项 · ข้อควรปฏิบัติ | Stay still, Do not bend leg, Do not sit up |
+| 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bed Bath, Peri Care, Lift Your Hips, Blood Test, Suctioning |
+| ⚠️ **Please / Do Not** · 注意事项 · ข้อควรปฏิบัติ | Please Stay Still, Do Not Bend Your Legs, Do Not Sit Up or Get Up |
 | ⭐ **My Feelings** · 自定义 · เพิ่มเอง | Anything you add yourself |
 
 The first four groups are things the **patient** says. *Care & Procedures* and
@@ -141,7 +140,7 @@ Staff cards keep a short label on the card but speak the complete sentence. In
 `manifest.json` that is the optional `say` object:
 
 ```json
-{ "key": "bathe", "en": "Bathing", "zh": "洗澡", "th": "อาบน้ำ",
+{ "key": "bathe", "en": "Bed Bath", "zh": "洗澡", "th": "อาบน้ำ",
   "say": { "th": "เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว", "...": "..." } }
 ```
 
@@ -150,6 +149,6 @@ what gets recorded into the audio files.
 
 ## Notes
 
-- Pictures are emoji, so the board works fully offline with no image files.
+- Illustrations ship with the project, so the board works fully offline.
 - The generator uses AI (neural TTS) voices. For a genuine human voice, use
   option 1 above — the app treats any `audio/<key>.mp3` the same way.
