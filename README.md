@@ -58,9 +58,11 @@ voice) — no build step needed for them.
 
 ## Pictures
 
-Each card's picture is a **custom SVG illustration** defined in
-[`pictures.js`](pictures.js) — drawn in code, no emoji and no image files, so
-they render identically on every device. Emoji are only a last-resort fallback.
+Most cards use a **hand-drawn illustration** of a patient acting out the feeling,
+stored as `images/<key>.png` (15 feelings). The three without an illustration
+(Medicine, Help, Call Nurse) fall back to a **custom SVG icon** from
+[`pictures.js`](pictures.js); emoji are the final fallback. The add-feeling
+picker offers both the illustrations and the SVG icons to choose from.
 
 Each card shows a small badge:
 

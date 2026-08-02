@@ -105,11 +105,16 @@
     }
 
     .pic {
-      width: 80px;
-      height: 80px;
+      width: 100%;
+      max-width: 150px;
+      height: 104px;
       line-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .pic svg { width: 100%; height: 100%; display: block; }
+    .pic svg { width: 96px; height: 96px; display: block; }
+    .pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .emoji { font-size: 3.4rem; line-height: 1; } /* emoji fallback */
 
     .label-en {
@@ -301,6 +306,7 @@
       aspect-ratio: 1 / 1;
     }
     .pick svg { width: 100%; height: 100%; display: block; }
+    .pick img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .pick.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
@@ -583,9 +589,18 @@
       catch (e) { /* storage unavailable — feelings just won't persist */ }
     }
 
+    // Keys that have a hand-drawn illustration in images/<key>.png.
+    const IMAGE_KEYS = new Set([
+      "hungry", "thirsty", "pain", "sleepy", "tired", "toilet", "cold", "hot",
+      "nausea", "dizzy", "breath", "itchy", "scared", "sad", "happy"
+    ]);
+
     function picFor(f) {
-      return PICS[f.picKey] || PICS[f.key] ||
-        ('<span class="emoji">' + (f.emoji || "🩹") + "</span>");
+      const key = f.picKey || f.key;
+      if (IMAGE_KEYS.has(key)) {
+        return '<img src="images/' + key + '.png" alt="" loading="lazy">';
+      }
+      return PICS[key] || ('<span class="emoji">' + (f.emoji || "🩹") + "</span>");
     }
 
     // ---- Build one feeling card ----
@@ -645,19 +660,24 @@
     const formError = document.getElementById("formError");
     let selectedPicKey = null;
 
-    // Build the picture picker once from the illustration set.
-    Object.keys(PICS).forEach(key => {
+    // Build the picture picker: illustrations first, then any SVG-only icons.
+    function addPick(key, inner) {
       const cell = document.createElement("button");
       cell.className = "pick";
       cell.type = "button";
       cell.title = key;
-      cell.innerHTML = PICS[key];
+      cell.innerHTML = inner;
       cell.addEventListener("click", () => {
         selectedPicKey = key;
         picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
         cell.classList.add("selected");
       });
       picker.appendChild(cell);
+    }
+    IMAGE_KEYS.forEach(key =>
+      addPick(key, '<img src="images/' + key + '.png" alt="" loading="lazy">'));
+    Object.keys(PICS).forEach(key => {
+      if (!IMAGE_KEYS.has(key)) addPick(key, PICS[key]);
     });
 
     function openModal() {
