@@ -74,7 +74,8 @@ def gen_gtts(feelings):
         os.makedirs(out_dir, exist_ok=True)
         print(f"  [{field}] -> audio/{subdir + '/' if subdir else ''}<key>.mp3")
         for f in feelings:
-            text = f.get(field)
+            # A "say" sentence is what the card speaks; fall back to the label.
+            text = (f.get("say") or {}).get(field) or f.get(field)
             if not text:
                 continue
             gTTS(text=text, lang=lang_code).save(os.path.join(out_dir, f["key"] + ".mp3"))

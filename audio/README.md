@@ -1,15 +1,16 @@
 # audio/ — Thai voice recordings
 
-The board plays one file per feeling from this folder:
+The board plays one file per card from this folder:
 
 ```
 audio/<key>.mp3
 ```
 
-The `<key>` values come from [`../manifest.json`](../manifest.json). All 25:
+The `<key>` values come from [`../manifest.json`](../manifest.json). Cards with a
+`say` sentence record that whole sentence, not just the short label. All 33:
 
-| key | category | English | Thai (say this) |
-|-----|----------|---------|-----------------|
+| key | category | English label | Thai spoken |
+|-----|----------|---------------|-------------|
 | hungry | Basic Needs | Hungry | หิว |
 | thirsty | Basic Needs | Thirsty | หิวน้ำ |
 | toilet | Basic Needs | Toilet | เข้าห้องน้ำ |
@@ -35,6 +36,14 @@ The `<key>` values come from [`../manifest.json`](../manifest.json). All 25:
 | nurse | Requests & Help | Call Nurse | เรียกพยาบาล |
 | talkdoctor | Requests & Help | I want to talk to the doctor. | อยากคุยกับหมอ |
 | gohome | Requests & Help | I want to go home. | อยากกลับบ้าน |
+| bathe | Care & Procedures | Bathing | เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว |
+| cleanbottom | Care & Procedures | Cleaning | เจ้าหน้าที่จะช่วยล้างทำความสะอาดก้น เพื่อสุขอนามัย |
+| liftbottom | Care & Procedures | Lift Bottom | เจ้าหน้าที่จะช่วยยกก้น เพื่อเปลี่ยนผ้าหรือแผ่นรอง |
+| bloodtest | Care & Procedures | Blood Test | พยาบาลจะเจาะเลือด เพื่อตรวจร่างกาย |
+| suction | Care & Procedures | Suction | พยาบาลจะดูดเสมหะ เพื่อช่วยให้หายใจสะดวก |
+| staystill | Please / Do Not | Stay Still | กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย |
+| nobendleg | Please / Do Not | Do Not Bend Leg | ห้ามงอขา เพื่อป้องกันการเลือดออก |
+| nositup | Please / Do Not | Do Not Sit Up | ห้ามลุกนั่ง เพื่อความปลอดภัย |
 
 ## Two ways to fill this folder
 

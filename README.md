@@ -114,7 +114,7 @@ scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
 .github/workflows/static.yml      deploys to Pages + generates clear audio
 ```
 
-## Categories and feelings (25)
+## Categories and cards (33)
 
 Cards are grouped into categories, each with a heading in all three languages:
 
@@ -124,10 +124,29 @@ Cards are grouped into categories, each with a heading in all three languages:
 | 🤕 **Pain & Symptoms** · 疼痛与症状 · อาการเจ็บป่วย | Pain, Back pain, Chest tightness, Heart racing, Painful urination, Short of Breath, Nausea, Dizzy, Itchy, Cold, Hot, Tired, Sleepy |
 | 🙂 **Feelings** · 情绪 · อารมณ์ | Scared, Sad, Happy |
 | 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
+| 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bathing, Cleaning, Lift bottom, Blood test, Suction |
+| ⚠️ **Please / Do Not** · 注意事项 · ข้อควรปฏิบัติ | Stay still, Do not bend leg, Do not sit up |
 | ⭐ **My Feelings** · 自定义 · เพิ่มเอง | Anything you add yourself |
+
+The first four groups are things the **patient** says. *Care & Procedures* and
+*Please / Do Not* are things **staff say to the patient** — explaining what they
+are about to do, or a safety instruction.
 
 When adding a feeling you pick which category it belongs to, so it can join a
 built-in group instead of only "My Feelings".
+
+### Cards that speak a full sentence
+
+Staff cards keep a short label on the card but speak the complete sentence. In
+`manifest.json` that is the optional `say` object:
+
+```json
+{ "key": "bathe", "en": "Bathing", "zh": "洗澡", "th": "อาบน้ำ",
+  "say": { "th": "เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว", "...": "..." } }
+```
+
+The sentence is also shown under the labels in the selected language, and it is
+what gets recorded into the audio files.
 
 ## Notes
 

@@ -36,9 +36,11 @@ def main():
     print(f"Generating {len(feelings)} offline Thai files into audio/tts/ ...")
 
     for f in feelings:
+        # A "say" sentence is what the card speaks; fall back to the label.
+        text = (f.get("say") or {}).get("th") or f["th"]
         wav_path = tempfile.NamedTemporaryFile(suffix=".wav", delete=False).name
         subprocess.run(
-            ["espeak-ng", "-v", "th", "-s", "150", "-w", wav_path, f["th"]],
+            ["espeak-ng", "-v", "th", "-s", "150", "-w", wav_path, text],
             check=True,
         )
         with wave.open(wav_path) as w:

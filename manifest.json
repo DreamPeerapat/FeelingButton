@@ -1,11 +1,13 @@
 {
-  "description": "Filename <-> phrase map for the Patient Feeling Board. Each audio file lives at audio/<key>.mp3 (Thai) or audio/<lang>/<key>.mp3, and says the phrase below. 'cat' is the category the card is grouped under.",
+  "description": "Filename <-> phrase map for the Patient Feeling Board. Each audio file lives at audio/<key>.mp3 (Thai) or audio/<lang>/<key>.mp3. 'cat' is the category the card is grouped under. When a 'say' object is present its sentence is what gets spoken and recorded, while en/zh/th stay the short card label.",
   "language": { "spoken": "th-TH" },
   "categories": [
-    { "id": "needs",    "en": "Basic Needs",     "zh": "基本需求",   "th": "ความต้องการพื้นฐาน" },
-    { "id": "symptoms", "en": "Pain & Symptoms", "zh": "疼痛与症状", "th": "อาการเจ็บป่วย" },
-    { "id": "feelings", "en": "Feelings",        "zh": "情绪",       "th": "อารมณ์" },
-    { "id": "help",     "en": "Requests & Help", "zh": "请求与帮助", "th": "คำขอและความช่วยเหลือ" }
+    { "id": "needs",    "en": "Basic Needs",       "zh": "基本需求",   "th": "ความต้องการพื้นฐาน" },
+    { "id": "symptoms", "en": "Pain & Symptoms",   "zh": "疼痛与症状", "th": "อาการเจ็บป่วย" },
+    { "id": "feelings", "en": "Feelings",          "zh": "情绪",       "th": "อารมณ์" },
+    { "id": "help",     "en": "Requests & Help",   "zh": "请求与帮助", "th": "คำขอและความช่วยเหลือ" },
+    { "id": "care",     "en": "Care & Procedures", "zh": "护理与操作", "th": "การดูแลและหัตถการ" },
+    { "id": "rules",    "en": "Please / Do Not",   "zh": "注意事项",   "th": "ข้อควรปฏิบัติ" }
   ],
   "feelings": [
     { "key": "hungry",       "cat": "needs",    "en": "Hungry",                          "zh": "饿了",     "th": "หิว" },
@@ -35,6 +37,40 @@
     { "key": "help",         "cat": "help",     "en": "Help",                            "zh": "需要帮助", "th": "ช่วยด้วย" },
     { "key": "nurse",        "cat": "help",     "en": "Call Nurse",                      "zh": "叫护士",   "th": "เรียกพยาบาล" },
     { "key": "talkdoctor",   "cat": "help",     "en": "I want to talk to the doctor.",   "zh": "想和医生谈", "th": "อยากคุยกับหมอ" },
-    { "key": "gohome",       "cat": "help",     "en": "I want to go home.",              "zh": "想回家",   "th": "อยากกลับบ้าน" }
+    { "key": "gohome",       "cat": "help",     "en": "I want to go home.",              "zh": "想回家",   "th": "อยากกลับบ้าน" },
+
+    { "key": "bathe",       "cat": "care", "en": "Bathing",     "zh": "洗澡",     "th": "อาบน้ำ",
+      "say": { "en": "The staff will help you bathe, to keep you clean and comfortable.",
+               "zh": "工作人员会帮您洗澡，保持清洁舒适。",
+               "th": "เจ้าหน้าที่จะช่วยอาบน้ำ เพื่อความสะอาดและความสบายตัว" } },
+    { "key": "cleanbottom", "cat": "care", "en": "Cleaning",    "zh": "清洗臀部", "th": "ล้างก้น",
+      "say": { "en": "The staff will help clean your bottom, for hygiene.",
+               "zh": "工作人员会帮您清洗臀部，保持卫生。",
+               "th": "เจ้าหน้าที่จะช่วยล้างทำความสะอาดก้น เพื่อสุขอนามัย" } },
+    { "key": "liftbottom",  "cat": "care", "en": "Lift Bottom", "zh": "抬起臀部", "th": "ยกก้น",
+      "say": { "en": "The staff will help lift your bottom to change the pad or sheet.",
+               "zh": "工作人员会帮您抬起臀部，更换尿垫或床单。",
+               "th": "เจ้าหน้าที่จะช่วยยกก้น เพื่อเปลี่ยนผ้าหรือแผ่นรอง" } },
+    { "key": "bloodtest",   "cat": "care", "en": "Blood Test",  "zh": "抽血",     "th": "พยาบาลจะเจาะเลือด",
+      "say": { "en": "The nurse will draw blood for tests.",
+               "zh": "护士要为您抽血，用于身体检查。",
+               "th": "พยาบาลจะเจาะเลือด เพื่อตรวจร่างกาย" } },
+    { "key": "suction",     "cat": "care", "en": "Suction",     "zh": "吸痰",     "th": "พยาบาลจะดูดเสมหะ",
+      "say": { "en": "The nurse will suction phlegm to help you breathe more easily.",
+               "zh": "护士要为您吸痰，帮助呼吸顺畅。",
+               "th": "พยาบาลจะดูดเสมหะ เพื่อช่วยให้หายใจสะดวก" } },
+
+    { "key": "staystill", "cat": "rules", "en": "Stay Still",       "zh": "请保持不动", "th": "กรุณาอยู่นิ่งๆ",
+      "say": { "en": "Please stay still, for your safety.",
+               "zh": "请保持不动，以确保安全。",
+               "th": "กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย" } },
+    { "key": "nobendleg", "cat": "rules", "en": "Do Not Bend Leg",  "zh": "请勿弯腿",   "th": "ห้ามงอขา",
+      "say": { "en": "Please do not bend your leg, to prevent bleeding.",
+               "zh": "请勿弯腿，以防出血。",
+               "th": "ห้ามงอขา เพื่อป้องกันการเลือดออก" } },
+    { "key": "nositup",   "cat": "rules", "en": "Do Not Sit Up",    "zh": "请勿坐起",   "th": "ห้ามลุกนั่ง",
+      "say": { "en": "Please do not sit up, for your safety.",
+               "zh": "请勿坐起，以确保安全。",
+               "th": "ห้ามลุกนั่ง เพื่อความปลอดภัย" } }
   ]
 }
