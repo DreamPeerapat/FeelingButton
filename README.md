@@ -48,10 +48,24 @@ own `audio/<key>.mp3` in — it takes priority over everything.
 ## Add your own feelings
 
 Tap the dashed **➕ Add feeling** card at the end of the board to create a new
-one. Enter the **English**, **Chinese**, and **Thai** (spoken) words, then
-**pick a picture** from the illustration set. Your feeling is added to the board
-and saved in the browser (`localStorage`), so it's still there next visit.
-Remove a custom feeling with the **×** in its corner.
+one. Enter the **English**, **Chinese**, and **Thai** (spoken) words, then either
+**pick a picture** from the illustration set or **📤 upload your own**. Your
+feeling is added to the board and saved in the browser (`localStorage`), so it's
+still there next visit. Remove a custom feeling with the **×** in its corner.
+
+### Uploaded pictures are resized automatically
+
+A photo straight from a phone is several MB, but browser storage only holds
+about 5 MB in total — so every upload is processed before it is saved:
+
+- redrawn on a canvas at a **maximum edge of 320px** (cards never show bigger)
+- re-encoded to **WebP** (JPEG on browsers without WebP), stepping quality and
+  then size down until it fits a **~60 KB budget**
+- transparency is flattened onto white so it can't turn black
+
+The modal shows the result, e.g. `320×240 · 37 KB (from 2194 KB)`. That keeps
+roughly 80+ uploaded pictures within the storage limit; if storage does fill up,
+saving shows a clear message instead of failing silently.
 
 Custom feelings speak their Thai text via the online voice (or the browser
 voice) — no build step needed for them.

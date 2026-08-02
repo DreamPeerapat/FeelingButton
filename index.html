@@ -324,6 +324,45 @@
     .btn-ghost { background: #eef1f6; color: var(--ink); }
     .btn-ghost:hover { background: #e2e7ef; }
     .form-error { color: #b23b3b; font-size: 0.85rem; min-height: 1.1em; margin-top: 2px; }
+
+    /* Upload-your-own-picture */
+    .upload-row { margin-top: 12px; }
+    .upload-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1.5px dashed #b9c6db;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+    }
+    .upload-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .upload-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding: 8px;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      background: var(--accent-soft);
+    }
+    .upload-preview img {
+      width: 64px; height: 64px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #fff;
+      flex: none;
+    }
+    .upload-info { font-size: 0.82rem; color: #24507f; display: flex; flex-direction: column; gap: 3px; }
+    .link-btn {
+      background: none; border: none; padding: 0;
+      color: #b23b3b; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; text-decoration: underline; align-self: flex-start;
+      font-family: inherit;
+    }
   </style>
 </head>
 <body>
@@ -361,7 +400,7 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h2 id="modalTitle">Add a feeling</h2>
-      <p class="sub">添加新的感受 · Fill in the words and pick a picture.</p>
+      <p class="sub">添加新的感受 · Fill in the words, then pick a picture or upload your own.</p>
 
       <div class="field">
         <label for="fEn">English</label>
@@ -378,6 +417,18 @@
 
       <div class="picker-label">Choose a picture · 选择图片</div>
       <div class="picker" id="picker"></div>
+
+      <div class="upload-row">
+        <label class="upload-btn" for="fFile">📤 Upload your own picture · 上传图片</label>
+        <input id="fFile" type="file" accept="image/*" hidden />
+        <div class="upload-preview" id="uploadPreview" hidden>
+          <img id="uploadImg" alt="" />
+          <div class="upload-info">
+            <span id="uploadMeta"></span>
+            <button type="button" class="link-btn" id="uploadClear">Remove</button>
+          </div>
+        </div>
+      </div>
 
       <div class="form-error" id="formError"></div>
 
@@ -584,9 +635,10 @@
       try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
       catch (e) { return []; }
     }
+    // Returns false if the browser refused to store (e.g. quota exceeded).
     function saveCustom(list) {
-      try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); }
-      catch (e) { /* storage unavailable — feelings just won't persist */ }
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); return true; }
+      catch (e) { return false; }
     }
 
     // Keys that have a hand-drawn illustration in images/<key>.png.
@@ -596,6 +648,8 @@
     ]);
 
     function picFor(f) {
+      // An uploaded picture (already downscaled) is stored inline on the feeling.
+      if (f.imgData) return '<img src="' + f.imgData + '" alt="">';
       const key = f.picKey || f.key;
       if (IMAGE_KEYS.has(key)) {
         return '<img src="images/' + key + '.png" alt="" loading="lazy">';
@@ -669,6 +723,7 @@
       cell.innerHTML = inner;
       cell.addEventListener("click", () => {
         selectedPicKey = key;
+        if (typeof clearUpload === "function") clearUpload(); // picking wins over upload
         picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
         cell.classList.add("selected");
       });
@@ -680,10 +735,103 @@
       if (!IMAGE_KEYS.has(key)) addPick(key, PICS[key]);
     });
 
+    // ---- Uploaded picture: downscale + compress before storing ----
+    // Photos from a phone are several MB; localStorage only holds ~5MB total,
+    // so every upload is redrawn onto a canvas at a sane size and re-encoded
+    // until it fits the byte budget below.
+    const MAX_EDGE = 320;      // px — cards never display bigger than this
+    const BYTE_BUDGET = 60000; // ~60KB per picture
+
+    const fileInput = document.getElementById("fFile");
+    const uploadPreview = document.getElementById("uploadPreview");
+    const uploadImg = document.getElementById("uploadImg");
+    const uploadMeta = document.getElementById("uploadMeta");
+    let uploadedData = null; // data URL of the processed picture
+
+    function dataUrlBytes(url) {
+      const i = url.indexOf(",");
+      // base64 encodes 3 bytes per 4 chars
+      return Math.round((url.length - i - 1) * 3 / 4);
+    }
+
+    // Draw at `scale`, encode at `quality`, preferring WebP then JPEG.
+    function encodeAt(img, edge, quality) {
+      const ratio = Math.min(edge / img.width, edge / img.height, 1);
+      const w = Math.max(1, Math.round(img.width * ratio));
+      const h = Math.max(1, Math.round(img.height * ratio));
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      // Flatten transparency onto white so JPEG doesn't turn it black.
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      let url = canvas.toDataURL("image/webp", quality);
+      if (url.indexOf("data:image/webp") !== 0) {
+        url = canvas.toDataURL("image/jpeg", quality); // Safari fallback
+      }
+      return { url: url, w: w, h: h };
+    }
+
+    // Step quality (then size) down until the picture fits the budget.
+    function shrinkToBudget(img) {
+      let best = null;
+      const edges = [MAX_EDGE, 260, 200, 160];
+      for (let e = 0; e < edges.length; e++) {
+        for (const q of [0.82, 0.7, 0.6, 0.5, 0.4]) {
+          best = encodeAt(img, edges[e], q);
+          if (dataUrlBytes(best.url) <= BYTE_BUDGET) return best;
+        }
+      }
+      return best; // smallest we could manage
+    }
+
+    function clearUpload() {
+      uploadedData = null;
+      fileInput.value = "";
+      uploadPreview.hidden = true;
+      uploadImg.removeAttribute("src");
+      uploadMeta.textContent = "";
+    }
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      if (!/^image\//.test(file.type)) {
+        formError.textContent = "Please choose an image file.";
+        clearUpload();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onerror = () => { formError.textContent = "Couldn't read that file."; };
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => { formError.textContent = "That image couldn't be opened."; };
+        img.onload = () => {
+          const out = shrinkToBudget(img);
+          uploadedData = out.url;
+          uploadImg.src = out.url;
+          uploadMeta.textContent =
+            out.w + "×" + out.h + " · " + Math.round(dataUrlBytes(out.url) / 1024) + " KB" +
+            " (from " + Math.round(file.size / 1024) + " KB)";
+          uploadPreview.hidden = false;
+          formError.textContent = "";
+          // An upload wins over any library picture that was selected.
+          selectedPicKey = null;
+          picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("uploadClear").addEventListener("click", clearUpload);
+
     function openModal() {
       inEn.value = ""; inZh.value = ""; inTh.value = "";
       formError.textContent = "";
       selectedPicKey = null;
+      clearUpload();
       picker.querySelectorAll(".pick").forEach(p => p.classList.remove("selected"));
       overlay.classList.add("open");
       inEn.focus();
@@ -696,15 +844,24 @@
       const th = inTh.value.trim();
       if (!en) { formError.textContent = "Please enter the English word."; inEn.focus(); return; }
       if (!th) { formError.textContent = "Please enter the Thai word to speak."; inTh.focus(); return; }
-      if (!selectedPicKey) { formError.textContent = "Please choose a picture."; return; }
+      if (!selectedPicKey && !uploadedData) {
+        formError.textContent = "Please choose a picture or upload one."; return;
+      }
 
       const list = loadCustom();
-      list.push({
+      const entry = {
         key: "custom_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        picKey: selectedPicKey,
         en: en, zh: zh, th: th, custom: true
-      });
-      saveCustom(list);
+      };
+      if (uploadedData) entry.imgData = uploadedData;
+      else entry.picKey = selectedPicKey;
+      list.push(entry);
+
+      if (!saveCustom(list)) {
+        formError.textContent =
+          "Not enough browser storage to save this picture. Remove a custom feeling and try again.";
+        return;
+      }
       closeModal();
       render();
     }
