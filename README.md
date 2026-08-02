@@ -1,4 +1,4 @@
-# Patient Feeling Board · 病人感受板
+# Patient Feeling Board (CCU1) · 病人感受板
 
 A single-page communication board that helps patients tell caregivers how they
 feel. Each card shows a **picture** with **English** and **Chinese** labels. Tapping a card **plays the feeling out loud in Thai** — for example,

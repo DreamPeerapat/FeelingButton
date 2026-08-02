@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patient Feeling Board · 病人感受板</title>
+  <title>Patient Feeling Board in CCU1 · 病人感受板</title>
   <style>
     :root {
       --bg: #f3f6fb;
@@ -38,6 +38,21 @@
       font-size: clamp(1.5rem, 4vw, 2.2rem);
       margin: 0 0 6px;
       letter-spacing: 0.5px;
+    }
+
+    /* Ward badge next to the title */
+    .unit {
+      display: inline-block;
+      vertical-align: middle;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.5em;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-left: 6px;
+      white-space: nowrap;
     }
 
     header p {
@@ -415,7 +430,7 @@
 </head>
 <body>
   <header>
-    <h1>🩺 Patient Feeling Board</h1>
+    <h1>🩺 Patient Feeling Board <span class="unit">CCU1</span></h1>
     <p>病人感受沟通板 · Speaks Thai / 中文 / English — you choose</p>
   </header>
 
