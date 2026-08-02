@@ -43,6 +43,10 @@
       "say": { "en": "I want the breathing tube out. It's uncomfortable.",
                "zh": "我想拔掉呼吸管，呼吸不舒服。",
                "th": "อยากเอาท่อช่วยหายใจออก หายใจไม่สบาย" } },
+    { "key": "catheterout",  "cat": "help",     "en": "I want the urinary catheter out.", "zh": "想拔掉导尿管", "th": "อยากเอาสายสวนปัสสาวะออก",
+      "say": { "en": "I want the urinary catheter out. It's uncomfortable.",
+               "zh": "我想拔掉导尿管，不舒服。",
+               "th": "อยากเอาสายสวนปัสสาวะออก ไม่สบายตัว" } },
 
     { "key": "bathe",       "cat": "care", "en": "Bed Bath",     "zh": "洗澡",     "th": "อาบน้ำ",
       "say": { "en": "The nurse will give you a bed bath to keep you clean and comfortable.",
