@@ -72,7 +72,7 @@ voice) — no build step needed for them.
 ## Pictures
 
 Most cards use a **hand-drawn illustration** of a patient acting out the feeling,
-stored as `images/<key>.png` (30 of the 33 cards). The three without one
+stored as `images/<key>.png` (32 of the 35 cards). The three without one
 (Medicine, Help, Call Nurse) fall back to a **custom SVG icon** from
 [`pictures.js`](pictures.js); emoji are the final fallback. The add-feeling
 picker offers both the illustrations and the SVG icons to choose from.
@@ -105,7 +105,7 @@ The filename ↔ phrase map lives in [`manifest.json`](manifest.json).
 ```
 index.html                        The board (open this)
 pictures.js                       custom SVG illustration for each feeling
-manifest.json                     key -> {English, Chinese, Thai} for all 33
+manifest.json                     key -> {English, Chinese, Thai} for all 35
 audio/<key>.mp3                   clear voice: CI (gTTS) / Polly / human (priority)
 audio/tts/<key>.mp3               bundled offline voice (always present)
 scripts/generate_audio.py         make clear Thai MP3s (gTTS or Polly)
@@ -113,7 +113,7 @@ scripts/generate_offline_tts.py   regenerate the bundled offline voice (eSpeak)
 .github/workflows/static.yml      deploys to Pages + generates clear audio
 ```
 
-## Categories and cards (33)
+## Categories and cards (35)
 
 Cards are grouped into categories, each with a heading in all three languages:
 
@@ -125,11 +125,12 @@ Cards are grouped into categories, each with a heading in all three languages:
 | 🔔 **Requests & Help** · 请求与帮助 · คำขอและความช่วยเหลือ | Help, Call Nurse, Talk to the doctor, Go home |
 | 🧼 **Care & Procedures** · 护理与操作 · การดูแลและหัตถการ | Bed Bath, Peri Care, Lift Your Hips, Blood Test, Suctioning |
 | ⚠️ **Please / Do Not** · 注意事项 · ข้อควรปฏิบัติ | Please Stay Still, Do Not Bend Your Legs, Do Not Sit Up or Get Up |
+| 💬 **Staff Messages** · 工作人员的话 · คำพูดจากเจ้าหน้าที่ | Thank You, Call for Help |
 | ⭐ **My Feelings** · 自定义 · เพิ่มเอง | Anything you add yourself |
 
-The first four groups are things the **patient** says. *Care & Procedures* and
-*Please / Do Not* are things **staff say to the patient** — explaining what they
-are about to do, or a safety instruction.
+The first four groups are things the **patient** says. *Care & Procedures*,
+*Please / Do Not* and *Staff Messages* are things **staff say to the patient** —
+explaining what they are about to do, a safety instruction, or a courtesy.
 
 When adding a feeling you pick which category it belongs to, so it can join a
 built-in group instead of only "My Feelings".

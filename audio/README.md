@@ -7,7 +7,7 @@ audio/<key>.mp3
 ```
 
 The `<key>` values come from [`../manifest.json`](../manifest.json). Cards with a
-`say` sentence record that whole sentence, not just the short label. All 33:
+`say` sentence record that whole sentence, not just the short label. All 35:
 
 | key | category | English label | Thai spoken |
 |-----|----------|---------------|-------------|
@@ -44,6 +44,8 @@ The `<key>` values come from [`../manifest.json`](../manifest.json). Cards with 
 | staystill | Please / Do Not | Please Stay Still | กรุณาอยู่นิ่งๆ เพื่อความปลอดภัย |
 | nobendleg | Please / Do Not | Do Not Bend Your Legs | ห้ามงอขา เพื่อป้องกันการเลือดออก |
 | nositup | Please / Do Not | Do Not Sit Up or Get Up | ห้ามลุกนั่ง เพื่อความปลอดภัย |
+| thanks | Staff Messages | Thank You | ขอบคุณสำหรับความร่วมมือ ช่วยให้คุณปลอดภัย |
+| callhelp | Staff Messages | Call for Help | หากต้องการสิ่งใด กรุณากดกริ่งเรียกพยาบาล |
 
 ## Two ways to fill this folder
 

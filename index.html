@@ -502,6 +502,7 @@
       { id: "help",     icon: "🔔", en: "Requests & Help", zh: "请求与帮助", th: "คำขอและความช่วยเหลือ" },
       { id: "care",     icon: "🧼", en: "Care & Procedures", zh: "护理与操作", th: "การดูแลและหัตถการ" },
       { id: "rules",    icon: "⚠️", en: "Please / Do Not", zh: "注意事项",   th: "ข้อควรปฏิบัติ" },
+      { id: "staffmsg", icon: "💬", en: "Staff Messages", zh: "工作人员的话", th: "คำพูดจากเจ้าหน้าที่" },
       { id: "custom",   icon: "⭐", en: "My Feelings",     zh: "自定义",     th: "เพิ่มเอง" }
     ];
 
@@ -572,7 +573,16 @@
       { key: "nositup", cat: "rules", emoji: "🚫", en: "Do Not Sit Up or Get Up", zh: "请勿坐起", th: "ห้ามลุกนั่ง",
         say: { en: "Please do not sit up or get out of bed by yourself.",
                zh: "请勿坐起，以确保安全。",
-               th: "ห้ามลุกนั่ง เพื่อความปลอดภัย" } }
+               th: "ห้ามลุกนั่ง เพื่อความปลอดภัย" } },
+
+      { key: "thanks", cat: "staffmsg", emoji: "👍", en: "Thank You", zh: "谢谢", th: "ขอบคุณ",
+        say: { en: "Thank you for your cooperation. It helps keep you safe.",
+               zh: "谢谢您的配合，这有助于保障您的安全。",
+               th: "ขอบคุณสำหรับความร่วมมือ ช่วยให้คุณปลอดภัย" } },
+      { key: "callhelp", cat: "staffmsg", emoji: "🔔", en: "Call for Help", zh: "呼叫帮助", th: "กดกริ่งเรียก",
+        say: { en: "If you need anything, please press the call button and let us know.",
+               zh: "如果您需要任何帮助，请按呼叫铃告诉我们。",
+               th: "หากต้องการสิ่งใด กรุณากดกริ่งเรียกพยาบาล" } }
     ];
 
     const AUDIO_DIR = "audio/";
@@ -765,7 +775,7 @@
       "backpain", "chestpain", "palpitations", "gohome", "talkdoctor",
       "pee", "bowel",
       "bathe", "cleanbottom", "liftbottom", "bloodtest", "suction",
-      "staystill", "nobendleg", "nositup"
+      "staystill", "nobendleg", "nositup", "thanks", "callhelp"
     ]);
 
     function picFor(f) {
