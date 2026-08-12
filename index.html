@@ -6,7 +6,7 @@
   <title>Patient Feeling Board in CCU1 · 病人感受板</title>
   <style>
     :root {
-      /* A- / A+ zoom for the whole board */
+      /* A- / A+ size for the cards only (header and controls stay fixed) */
       --ui-scale: 1;
       --bg: #f3f6fb;
       --card: #ffffff;
@@ -19,8 +19,6 @@
     }
 
     * { box-sizing: border-box; }
-
-    html { font-size: calc(16px * var(--ui-scale)); }
 
     body {
       margin: 0;
@@ -78,7 +76,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(calc(12.5rem * var(--ui-scale)), 1fr));
       gap: 16px;
       max-width: 1240px;
       margin: 0 auto;
@@ -110,6 +108,8 @@
     }
 
     .feeling-btn {
+      /* A-/A+ scales the card only: inner sizes are em off this. */
+      font-size: calc(1rem * var(--ui-scale));
       position: relative;
       background: var(--card);
       border: 2px solid transparent;
@@ -150,27 +150,27 @@
 
     .pic {
       width: 100%;
-      max-width: 10.625rem;
-      height: 7.5rem;
+      max-width: 10.625em;
+      height: 7.5em;
       line-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .pic svg { width: 6rem; height: 6rem; display: block; }
+    .pic svg { width: 6em; height: 6em; display: block; }
     .pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .emoji { font-size: 3.4rem; line-height: 1; } /* emoji fallback */
+    .emoji { font-size: 3.4em; line-height: 1; } /* emoji fallback */
 
     .label-en {
-      font-size: 1.5rem;
+      font-size: 1.5em;
       font-weight: 700;
     }
     /* Full-sentence labels get a smaller size so cards stay tidy. */
-    .label-en.long { font-size: 1.15rem; line-height: 1.3; }
+    .label-en.long { font-size: 1.15em; line-height: 1.3; }
 
     /* The explanation sentence spoken by staff-instruction cards. */
     .label-note {
-      font-size: 1rem;
+      font-size: 1em;
       line-height: 1.4;
       color: var(--muted);
       border-top: 1px dashed #dfe6f0;
@@ -179,13 +179,13 @@
     }
 
     .label-zh {
-      font-size: 1.32rem;
+      font-size: 1.32em;
       color: var(--muted);
       font-weight: 600;
     }
 
     .label-th {
-      font-size: 1.18rem;
+      font-size: 1.18em;
       color: var(--accent);
       font-weight: 600;
     }
@@ -225,13 +225,13 @@
 
     /* Phones: keep two cards per row, still larger text than before. */
     @media (max-width: 560px) {
-      .grid { grid-template-columns: repeat(auto-fill, minmax(9.25rem, 1fr)); gap: 12px; }
-      .label-en { font-size: 1.25rem; }
-      .label-en.long { font-size: 1rem; }
-      .label-zh { font-size: 1.12rem; }
-      .label-th { font-size: 1rem; }
-      .label-note { font-size: 0.88rem; }
-      .pic { height: 6rem; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(calc(9.25rem * var(--ui-scale)), 1fr)); gap: 12px; }
+      .label-en { font-size: 1.25em; }
+      .label-en.long { font-size: 1em; }
+      .label-zh { font-size: 1.12em; }
+      .label-th { font-size: 1em; }
+      .label-note { font-size: 0.88em; }
+      .pic { height: 6em; }
       .cat-head { font-size: 1.25rem; }
       .cat-sub { font-size: 0.95rem; }
       .feeling-btn { padding: 16px 10px 14px; }
@@ -311,6 +311,7 @@
 
     /* "Add feeling" card */
     .add-btn {
+      font-size: calc(1rem * var(--ui-scale));
       background: transparent;
       border: 2.5px dashed #b9c6db;
       color: var(--muted);
@@ -321,13 +322,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 180px;
+      min-height: 11.25em;
       font-family: inherit;
       transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
     }
     .add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-    .add-btn .plus { font-size: 2.6rem; line-height: 1; }
-    .add-btn .add-label { font-size: 1.2rem; font-weight: 700; }
+    .add-btn .plus { font-size: 2.6em; line-height: 1; }
+    .add-btn .add-label { font-size: 1.2em; font-weight: 700; }
 
     /* Remove (×) button on custom cards */
     .remove-btn {

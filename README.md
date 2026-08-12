@@ -27,9 +27,11 @@ step the whole board through 85% – 200% (85, 100, 115, 130, 150, 175, 200) and
 the current value is shown between them. The buttons disable at each end, and
 the choice is saved in the browser so the ward keeps its setting.
 
-Card widths, pictures and text are all sized in `rem`, so a change zooms the
-board as a whole rather than only growing text inside fixed-width cards; the
-grid simply reflows to fewer columns as things get bigger.
+It resizes **the cards only** — their text, pictures and width. The title,
+hint, language selector and category headings keep their size, so the controls
+stay compact and the extra room goes to the cards. Each card sets
+`font-size: calc(1rem * var(--ui-scale))` and everything inside it is in `em`,
+so the grid just reflows to fewer columns as the cards grow.
 
 ## Audio: real recordings, with a safety net
 
