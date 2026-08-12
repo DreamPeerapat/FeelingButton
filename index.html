@@ -6,6 +6,8 @@
   <title>Patient Feeling Board in CCU1 · 病人感受板</title>
   <style>
     :root {
+      /* A- / A+ zoom for the whole board */
+      --ui-scale: 1;
       --bg: #f3f6fb;
       --card: #ffffff;
       --ink: #1f2a44;
@@ -17,6 +19,8 @@
     }
 
     * { box-sizing: border-box; }
+
+    html { font-size: calc(16px * var(--ui-scale)); }
 
     body {
       margin: 0;
@@ -74,7 +78,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
       gap: 16px;
       max-width: 1240px;
       margin: 0 auto;
@@ -146,14 +150,14 @@
 
     .pic {
       width: 100%;
-      max-width: 170px;
-      height: 120px;
+      max-width: 10.625rem;
+      height: 7.5rem;
       line-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .pic svg { width: 96px; height: 96px; display: block; }
+    .pic svg { width: 6rem; height: 6rem; display: block; }
     .pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .emoji { font-size: 3.4rem; line-height: 1; } /* emoji fallback */
 
@@ -221,13 +225,13 @@
 
     /* Phones: keep two cards per row, still larger text than before. */
     @media (max-width: 560px) {
-      .grid { grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(9.25rem, 1fr)); gap: 12px; }
       .label-en { font-size: 1.25rem; }
       .label-en.long { font-size: 1rem; }
       .label-zh { font-size: 1.12rem; }
       .label-th { font-size: 1rem; }
       .label-note { font-size: 0.88rem; }
-      .pic { height: 96px; }
+      .pic { height: 6rem; }
       .cat-head { font-size: 1.25rem; }
       .cat-sub { font-size: 0.95rem; }
       .feeling-btn { padding: 16px 10px 14px; }
@@ -264,6 +268,40 @@
     }
     .lang-opt:hover { color: var(--ink); }
     .lang-opt.active { background: var(--accent); color: #fff; }
+
+    /* A- / A+ text size control */
+    .size-seg {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #eaeff6;
+      border-radius: 999px;
+      padding: 4px;
+    }
+    .size-btn {
+      border: none;
+      background: #fff;
+      color: var(--ink);
+      font-family: inherit;
+      font-weight: 800;
+      border-radius: 999px;
+      cursor: pointer;
+      min-width: 2.6rem;
+      padding: 8px 10px;
+      box-shadow: 0 1px 3px rgba(31, 42, 68, 0.14);
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .size-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .size-btn:disabled { opacity: 0.4; cursor: default; }
+    .size-btn.small { font-size: 0.85rem; }
+    .size-btn.big { font-size: 1.2rem; }
+    .size-val {
+      min-width: 3.4rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
 
     /* highlight the label of the language that will be spoken */
     .label-en.spoken, .label-zh.spoken, .label-th.spoken {
@@ -330,7 +368,7 @@
       border-radius: 18px;
       box-shadow: 0 20px 50px rgba(31, 42, 68, 0.3);
       width: 100%;
-      max-width: 460px;
+      max-width: 28.75rem;
       max-height: 90vh;
       overflow-y: auto;
       padding: 22px 22px 20px;
@@ -459,6 +497,15 @@
       <button class="lang-opt" type="button" data-lang="th">ไทย Thai</button>
       <button class="lang-opt" type="button" data-lang="zh">中文</button>
       <button class="lang-opt" type="button" data-lang="en">English</button>
+    </div>
+
+    <span class="lbl">🔠 Text size · 字体大小：</span>
+    <div class="size-seg">
+      <button class="size-btn small" id="sizeDown" type="button"
+              aria-label="Smaller text">A−</button>
+      <span class="size-val" id="sizeVal">100%</span>
+      <button class="size-btn big" id="sizeUp" type="button"
+              aria-label="Larger text">A+</button>
     </div>
   </div>
 
@@ -1111,6 +1158,38 @@
       });
     });
     updateLangButtons();
+
+    // ---- A- / A+ text size ----
+    // Every card metric is in rem, so scaling the root font size zooms the
+    // whole board — text, pictures and card widths together.
+    const SCALE_KEY = "fb_ui_scale_v1";
+    const SCALES = [0.85, 1, 1.15, 1.3, 1.5, 1.75, 2];
+    let scaleIdx = SCALES.indexOf(1);
+    try {
+      const saved = parseFloat(localStorage.getItem(SCALE_KEY));
+      const i = SCALES.indexOf(saved);
+      if (i >= 0) scaleIdx = i;
+    } catch (e) {}
+
+    const sizeDown = document.getElementById("sizeDown");
+    const sizeUp = document.getElementById("sizeUp");
+    const sizeVal = document.getElementById("sizeVal");
+
+    function applyScale() {
+      const s = SCALES[scaleIdx];
+      document.documentElement.style.setProperty("--ui-scale", s);
+      sizeVal.textContent = Math.round(s * 100) + "%";
+      sizeDown.disabled = scaleIdx === 0;
+      sizeUp.disabled = scaleIdx === SCALES.length - 1;
+      try { localStorage.setItem(SCALE_KEY, String(s)); } catch (e) {}
+    }
+    sizeDown.addEventListener("click", () => {
+      if (scaleIdx > 0) { scaleIdx--; applyScale(); }
+    });
+    sizeUp.addEventListener("click", () => {
+      if (scaleIdx < SCALES.length - 1) { scaleIdx++; applyScale(); }
+    });
+    applyScale();
 
     render();
 

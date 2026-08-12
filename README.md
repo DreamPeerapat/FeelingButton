@@ -20,6 +20,17 @@ generates `audio/<key>.mp3` for Thai and `audio/zh/`, `audio/en/` for the
 others). Offline, Thai uses its bundled voice; Chinese/English use the device's
 built-in voice if present.
 
+## Text size (A− / A+)
+
+Next to the language selector is a **🔠 Text size** control. **A−** and **A+**
+step the whole board through 85% – 200% (85, 100, 115, 130, 150, 175, 200) and
+the current value is shown between them. The buttons disable at each end, and
+the choice is saved in the browser so the ward keeps its setting.
+
+Card widths, pictures and text are all sized in `rem`, so a change zooms the
+board as a whole rather than only growing text inside fixed-width cards; the
+grid simply reflows to fewer columns as things get bigger.
+
 ## Audio: real recordings, with a safety net
 
 **The board always makes sound out of the box** — no setup required. On every
